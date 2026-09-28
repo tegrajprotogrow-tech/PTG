@@ -1,0 +1,45 @@
+{
+  "_comment": "Hard limits the agent can never exceed, even on approved proposals. Edit these to tighten or relax them.",
+  "account": {
+    "merchant_center_id": "5775540276",
+    "google_ads_customer_id": null,
+    "currency": "INR",
+    "country": "IN",
+    "canonical_brand": "Pro-To-Grow"
+  },
+  "approval": {
+    "required_for_every_change": true,
+    "approver": "dmm@protogrow.in",
+    "proposal_expiry_days": 7
+  },
+  "budget": {
+    "max_daily_change_pct": 20,
+    "max_daily_budget_inr": 5000,
+    "min_days_between_budget_changes": 7
+  },
+  "bidding": {
+    "target_roas": 3.0,
+    "max_target_roas_change_pct": 15,
+    "max_target_cpa_change_pct": 15,
+    "min_conversions_before_smart_bidding_change": 30
+  },
+  "keywords": {
+    "negative_min_cost_inr": 300,
+    "negative_min_clicks": 15,
+    "max_negatives_per_run": 25
+  },
+  "merchant_center": {
+    "low_ctr_min_impressions": 20000,
+    "low_ctr_threshold_pct": 0.15,
+    "hero_min_clicks": 100,
+    "hero_min_ctr_pct": 1.5,
+    "zero_click_min_impressions": 500,
+    "duplicate_title_similarity": 0.6
+  },
+  "never_allowed": [
+    "delete_customer_match_list",
+    "remove_keywords",
+    "create_campaign with status ENABLED",
+    "any change to a campaign in its first 14 days (learning period)"
+  ]
+}

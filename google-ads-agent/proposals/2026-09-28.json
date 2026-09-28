@@ -1,0 +1,972 @@
+{
+  "date": "2026-09-28",
+  "generated_at": "2026-09-28T19:58:58+00:00",
+  "sources": {
+    "merchant_center": true,
+    "google_ads": false
+  },
+  "proposals": [
+    {
+      "rule": "MC-001",
+      "severity": "high",
+      "title": "9 products have no title or a price of 0",
+      "finding": "Items without a title or with price 0 cannot serve and lower account quality.",
+      "recommended_action": "Fix title and price in the source (Shopify / feed), or exclude these items from the Google channel.",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify > Products (or Merchant Center > Products)",
+        "steps": [
+          "Open each item listed in evidence",
+          "Add title + price, or unpublish from the Google & YouTube channel"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "shopify_ZZ_8620818530442_46501271470218",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_8701476962442_47192296980618",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8667200782474_47029307408522",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9122015314058_49571323412618",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9092922736778_49507350478986",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8620817547402_46501266522250",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "PTG-SPR-HAZEL-2PK",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "PTG-HPO-DC-5PACK",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "PTG-SPR-HAZEL-300G",
+          "brand": "Pro-To-Grow"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P001",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-002",
+      "severity": "high",
+      "title": "19 products appear to be listed twice (Shopify feed + PTG feed)",
+      "finding": "The same product is submitted by two data sources. Duplicates split clicks and history, and can compete against each other in the same auction.",
+      "recommended_action": "Pick ONE primary data source per product. Recommended: keep the PTG-* feed (it has custom labels, GTINs and numeric categories) and exclude the matching Shopify items from Google.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Products > Data sources",
+        "steps": [
+          "Confirm each pair in evidence is really the same SKU",
+          "Exclude the Shopify duplicate (or delete the PTG item and move its labels to Shopify)"
+        ]
+      },
+      "evidence": [
+        {
+          "ptg_feed_id": "PTG-COMBO-CD-BBO",
+          "shopify_id": "shopify_ZZ_8628091584650_46521939853450",
+          "title": "Chocolate Health Drink and Bhim Banana Oats Combo",
+          "similarity": 0.83
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-STRAW-300G-JAR",
+          "shopify_id": "shopify_ZZ_8848704667786_47614306943114",
+          "title": "Strawberry Ready-to-Eat Oats – 300g Jar",
+          "similarity": 0.67
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-CUPS-ST-5PK",
+          "shopify_id": "shopify_ZZ_8932215226506_47849792307338",
+          "title": "Strawberry Instant Oats Cups – Pack of 5",
+          "similarity": 0.71
+        },
+        {
+          "ptg_feed_id": "PTG-ZAS-400G",
+          "shopify_id": "shopify_ZZ_9122023243914_49571332292746",
+          "title": "Instant Oats Zero Added Sugar 400g",
+          "similarity": 0.6
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-CUPS-PI-5PK",
+          "shopify_id": "shopify_ZZ_8932215193738_47849792241802",
+          "title": "Pineapple Instant Oats Cups – Pack of 5",
+          "similarity": 0.6
+        },
+        {
+          "ptg_feed_id": "PTG-CD-300G-BOX",
+          "shopify_id": "shopify_ZZ_8701478174858_47192298651786",
+          "title": "Chocolate Health Drink – 300g Box",
+          "similarity": 0.62
+        },
+        {
+          "ptg_feed_id": "PTG-PAN-CHOCBAN-2PK",
+          "shopify_id": "shopify_ZZ_8628125368458_46522009288842",
+          "title": "Choco Banana Healthy Pancake Mix Pack of 2",
+          "similarity": 0.86
+        },
+        {
+          "ptg_feed_id": "PTG-HPO-ST-5PACK",
+          "shopify_id": "shopify_ZZ_9160767438986_49660293611658",
+          "title": "Strawberry High-Protein Oats – Pack of 5",
+          "similarity": 0.83
+        },
+        {
+          "ptg_feed_id": "PTG-PAN-STRAW-250G",
+          "shopify_id": "shopify_ZZ_8620814499978_46501253054602",
+          "title": "Strawberry Healthy Pancake Mix – 250g",
+          "similarity": 0.6
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-300G-JAR",
+          "shopify_id": "shopify_ZZ_8619464622218_46496656097418",
+          "title": "Bhim Banana Ready-to-Eat Oats – 300g Jar",
+          "similarity": 1.0
+        },
+        {
+          "ptg_feed_id": "PTG-PAN-CHOCBAN-250G",
+          "shopify_id": "shopify_ZZ_8619461181578_46496648429706",
+          "title": "Choco Banana Healthy Pancake Mix – 250g",
+          "similarity": 0.67
+        },
+        {
+          "ptg_feed_id": "PTG-CD-750G-VALUE",
+          "shopify_id": "shopify_ZZ_8727461232778_47279609151626",
+          "title": "Chocolate Health Drink Value Pack – 750g",
+          "similarity": 0.75
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-400G-POUCH",
+          "shopify_id": "shopify_ZZ_9070155333770_49462199943306",
+          "title": "Bhim Banana Ready-to-Eat Oats – 400g Pouch",
+          "similarity": 1.0
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-PINE-300G-JAR",
+          "shopify_id": "shopify_ZZ_8792465571978_47410928681098",
+          "title": "Pineapple Ready-to-Eat Oats – 300g Jar",
+          "similarity": 0.67
+        },
+        {
+          "ptg_feed_id": "PTG-PAN-3FLAV-2PK",
+          "shopify_id": "shopify_ZZ_8628126384266_46522010566794",
+          "title": "Choco Banana and Strawberry Pancake Mix Combo – 2 x 250g",
+          "similarity": 0.67
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-CUPS-BB-5PK",
+          "shopify_id": "shopify_ZZ_8628122157194_46521999458442",
+          "title": "Bhim Banana Instant Oats Cups – Pack of 5",
+          "similarity": 0.67
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-CUPS-3FLAV-6PK",
+          "shopify_id": "shopify_ZZ_9011921485962_47916964905098",
+          "title": "Instant Oats Cups Combo – 6 Cups",
+          "similarity": 0.75
+        },
+        {
+          "ptg_feed_id": "PTG-BBO-300G-BOX",
+          "shopify_id": "shopify_ZZ_8619464622218_46496656097418",
+          "title": "Bhim Banana Ready-to-Eat Oats – 300g Box",
+          "similarity": 0.6
+        },
+        {
+          "ptg_feed_id": "PTG-COMBO-BBO-BOWL",
+          "shopify_id": "shopify_ZZ_8727447699594_47279595585674",
+          "title": "Bhim Banana Oats Value Pack – 1kg with Bowl",
+          "similarity": 0.86
+        }
+      ],
+      "risk": "medium",
+      "status": "PENDING",
+      "id": "P002",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "PERF-001",
+      "severity": "high",
+      "title": "10 products get lots of impressions but almost no clicks",
+      "finding": "CTR below 0.15% on 20000+ impressions (30 days). Usually a weak main image, a vague title, or a price that looks high next to competitors.",
+      "recommended_action": "1) Rewrite titles as: Brand + Product + Key benefit + Size (front-load the search words). 2) Use a clean white-background pack shot as the main image. 3) Tag these custom_label_1=LOW-CTR so Ads can bid them down until fixed.",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify product title/image + Merchant Center label rule",
+        "steps": [
+          "Review each item",
+          "Approve new title text (agent will draft it on request)"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "SHOPIFY_ZZ_8699762344074_47189069234314",
+          "title": "Bhim Banana Ready-to-Eat Oats Pack of 3 – 300g Jars with Bowl",
+          "impressions": 136594,
+          "clicks": 137,
+          "ctr_pct": 0.1
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8915079757962_47817448980618",
+          "title": "Protogrow Oats Combo Jar | Bhim Banana Pineapple & Strawberry",
+          "impressions": 132732,
+          "clicks": 67,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8727447699594_47279595585674",
+          "title": "Protogrow Bhim Banana Oats Value Pack | 1kg + Free Bowl",
+          "impressions": 131401,
+          "clicks": 149,
+          "ctr_pct": 0.11
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9070155333770_49462199943306",
+          "title": "Bhim Banana Ready-to-Eat Oats - 400g Pouch",
+          "impressions": 124763,
+          "clicks": 114,
+          "ctr_pct": 0.09
+        },
+        {
+          "product_id": "PTG-PAN-3FLAV-2PK",
+          "title": "Choco Banana and Strawberry Pancake Mix Combo – 2 x 250g",
+          "impressions": 120550,
+          "clicks": 32,
+          "ctr_pct": 0.03
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8848708599946_47614324408458",
+          "title": "Protogrow Strawberry Oats",
+          "impressions": 90337,
+          "clicks": 47,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8915109183626_47817487417482",
+          "title": "Protogrow Oats Combo | Bhim Banana Pineapple & Strawberry",
+          "impressions": 82671,
+          "clicks": 10,
+          "ctr_pct": 0.01
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8771265134730_47363544219786",
+          "title": "Protogrow Bhim Banana Oats + Stainless Steel Bowl Combo",
+          "impressions": 35426,
+          "clicks": 39,
+          "ctr_pct": 0.11
+        },
+        {
+          "product_id": "PTG-BYOB-BOX6",
+          "title": "Build Your Own Box – Pack of 6",
+          "impressions": 30742,
+          "clicks": 38,
+          "ctr_pct": 0.12
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8848704667786_47614306943114",
+          "title": "Protogrow Strawberry Oats Jar",
+          "impressions": 24604,
+          "clicks": 35,
+          "ctr_pct": 0.14
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P003",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-003",
+      "severity": "medium",
+      "title": "47 products use a non-standard brand name",
+      "finding": "Brand values found: {'Pro-to-grow': 41, 'My Store': 6}. 'My Store' is the Shopify default and is wrong.",
+      "recommended_action": "Set brand (Shopify vendor) to 'Pro-To-Grow' on every product.",
+      "execution": {
+        "channel": "shopify",
+        "action": "update-product",
+        "field": "vendor",
+        "value": "Pro-To-Grow",
+        "product_ids": [
+          "shopify_ZZ_8771273654410_47363565158538",
+          "shopify_ZZ_8771236266122_47363506143370",
+          "shopify_ZZ_8701478174858_47192298651786",
+          "shopify_ZZ_8915109183626_47817487417482",
+          "shopify_ZZ_8620818530442_46501271470218",
+          "shopify_ZZ_9011921485962_47916964905098",
+          "shopify_ZZ_8727447699594_47279595585674",
+          "shopify_ZZ_8915079757962_47817448980618",
+          "shopify_ZZ_8932215226506_47849792307338",
+          "shopify_ZZ_8619455807626_46496635420810",
+          "shopify_ZZ_8628126384266_46522010566794",
+          "shopify_ZZ_9055166529674_49248422822026",
+          "shopify_ZZ_8699762344074_47189069234314",
+          "shopify_ZZ_8743073251466_47313457152138",
+          "shopify_ZZ_8650511679626_46759029014666",
+          "shopify_ZZ_8628125368458_46522009288842",
+          "shopify_ZZ_8619464622218_46496656097418",
+          "shopify_ZZ_8771265134730_47363544219786",
+          "shopify_ZZ_8628127858826_46522012205194",
+          "shopify_ZZ_8701476962442_47192296980618",
+          "shopify_ZZ_8667200782474_47029307408522",
+          "shopify_ZZ_8848704667786_47614306943114",
+          "shopify_ZZ_8628122157194_46521999458442",
+          "shopify_ZZ_9122015314058_49571323412618",
+          "shopify_ZZ_8619461181578_46496648429706",
+          "shopify_ZZ_8628095844490_46521946669194",
+          "shopify_ZZ_9070159200394_49462207676554",
+          "shopify_ZZ_8620814499978_46501253054602",
+          "shopify_ZZ_8701471424650_47192285085834",
+          "shopify_ZZ_9070155333770_49462199943306",
+          "shopify_ZZ_8628097384586_46521949290634",
+          "shopify_ZZ_9122023243914_49571332292746",
+          "shopify_ZZ_8792465571978_47410928681098",
+          "shopify_ZZ_8628091584650_46521939853450",
+          "shopify_ZZ_9092922736778_49507350478986",
+          "shopify_ZZ_8792468914314_47410932220042",
+          "shopify_ZZ_8727461232778_47279609151626",
+          "shopify_ZZ_8848708599946_47614324408458",
+          "shopify_ZZ_8932215193738_47849792241802",
+          "shopify_ZZ_8620817547402_46501266522250",
+          "shopify_ZZ_9153575387274_49635505897610",
+          "shopify_ZZ_9160767438986_49660293611658",
+          "shopify_ZZ_9160701149322_49660221194378",
+          "shopify_ZZ_8650512924810_46759033110666",
+          "shopify_ZZ_9122014363786_49754188054666",
+          "shopify_ZZ_9208717639818_49776495558794",
+          "shopify_ZZ_8619458920586_50253404668042"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "shopify_ZZ_8771273654410_47363565158538",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8771236266122_47363506143370",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8701478174858_47192298651786",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8915109183626_47817487417482",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8620818530442_46501271470218",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_9011921485962_47916964905098",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8727447699594_47279595585674",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8915079757962_47817448980618",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8932215226506_47849792307338",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8619455807626_46496635420810",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_8628126384266_46522010566794",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9055166529674_49248422822026",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8699762344074_47189069234314",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8743073251466_47313457152138",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8650511679626_46759029014666",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8628125368458_46522009288842",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8619464622218_46496656097418",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_8771265134730_47363544219786",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8628127858826_46522012205194",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8701476962442_47192296980618",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8667200782474_47029307408522",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8848704667786_47614306943114",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8628122157194_46521999458442",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9122015314058_49571323412618",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8619461181578_46496648429706",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_8628095844490_46521946669194",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9070159200394_49462207676554",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8620814499978_46501253054602",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_8701471424650_47192285085834",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9070155333770_49462199943306",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8628097384586_46521949290634",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9122023243914_49571332292746",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8792465571978_47410928681098",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8628091584650_46521939853450",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9092922736778_49507350478986",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8792468914314_47410932220042",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8727461232778_47279609151626",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8848708599946_47614324408458",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8932215193738_47849792241802",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8620817547402_46501266522250",
+          "brand": "My Store"
+        },
+        {
+          "product_id": "shopify_ZZ_9153575387274_49635505897610",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9160767438986_49660293611658",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9160701149322_49660221194378",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8650512924810_46759033110666",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9122014363786_49754188054666",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9208717639818_49776495558794",
+          "brand": "Pro-to-grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8619458920586_50253404668042",
+          "brand": "Pro-to-grow"
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P004",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-004",
+      "severity": "medium",
+      "title": "62 products have no GTIN (barcode)",
+      "finding": "Products with GTINs get better matching and more impressions in Shopping.",
+      "recommended_action": "Add the EAN-13 barcode from the pack to each product (Shopify variant 'Barcode' field).",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify > Products > Variant > Barcode",
+        "steps": [
+          "Enter the 13-digit barcode printed on the pack"
+        ]
+      },
+      "evidence": [
+        "shopify_ZZ_8771273654410_47363565158538",
+        "shopify_ZZ_8771236266122_47363506143370",
+        "shopify_ZZ_8701478174858_47192298651786",
+        "shopify_ZZ_8915109183626_47817487417482",
+        "shopify_ZZ_9011921485962_47916964905098",
+        "shopify_ZZ_8727447699594_47279595585674",
+        "shopify_ZZ_8915079757962_47817448980618",
+        "shopify_ZZ_8932215226506_47849792307338",
+        "shopify_ZZ_8619455807626_46496635420810",
+        "shopify_ZZ_8628126384266_46522010566794",
+        "shopify_ZZ_9055166529674_49248422822026",
+        "shopify_ZZ_8699762344074_47189069234314",
+        "shopify_ZZ_8743073251466_47313457152138",
+        "shopify_ZZ_8650511679626_46759029014666",
+        "shopify_ZZ_8628125368458_46522009288842",
+        "shopify_ZZ_8619464622218_46496656097418",
+        "shopify_ZZ_8771265134730_47363544219786",
+        "shopify_ZZ_8628127858826_46522012205194",
+        "shopify_ZZ_8848704667786_47614306943114",
+        "shopify_ZZ_8628122157194_46521999458442",
+        "shopify_ZZ_8619461181578_46496648429706",
+        "shopify_ZZ_8628095844490_46521946669194",
+        "shopify_ZZ_9070159200394_49462207676554",
+        "shopify_ZZ_8620814499978_46501253054602",
+        "shopify_ZZ_8701471424650_47192285085834",
+        "shopify_ZZ_9070155333770_49462199943306",
+        "shopify_ZZ_8628097384586_46521949290634",
+        "shopify_ZZ_9122023243914_49571332292746",
+        "shopify_ZZ_8792465571978_47410928681098",
+        "shopify_ZZ_8628091584650_46521939853450",
+        "shopify_ZZ_8792468914314_47410932220042",
+        "shopify_ZZ_8727461232778_47279609151626",
+        "shopify_ZZ_8848708599946_47614324408458",
+        "shopify_ZZ_8932215193738_47849792241802",
+        "shopify_ZZ_9153575387274_49635505897610",
+        "shopify_ZZ_9160767438986_49660293611658",
+        "shopify_ZZ_9160701149322_49660221194378",
+        "PTG-BBO-PINE-300G-BOX",
+        "PTG-COMBO-CD-BBO",
+        "shopify_ZZ_8650512924810_46759033110666",
+        "PTG-BBO-STRAW-300G-JAR",
+        "PTG-CD-400G-POUCH",
+        "PTG-BBO-CUPS-ST-5PK",
+        "PTG-BBO-CUPS-PI-5PK",
+        "PTG-CD-300G-BOX",
+        "PTG-PAN-CHOCBAN-2PK",
+        "PTG-HPO-PI-5PACK",
+        "PTG-PAN-STRAW-250G",
+        "PTG-BBO-300G-JAR",
+        "PTG-PAN-CHOCBAN-250G",
+        "PTG-CD-750G-VALUE",
+        "PTG-BBO-PINE-300G-JAR",
+        "PTG-PAN-3FLAV-2PK",
+        "PTG-BBO-CUPS-BB-5PK",
+        "PTG-BYOB-BOX6",
+        "PTG-BBO-CUPS-3FLAV-6PK",
+        "PTG-BYOB-BOX10",
+        "PTG-BBO-300G-BOX",
+        "shopify_ZZ_9122014363786_49754188054666",
+        "shopify_ZZ_9208717639818_49776495558794",
+        "PTG-PAN-JACKFRUIT-250G",
+        "shopify_ZZ_8619458920586_50253404668042"
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P005",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-005",
+      "severity": "medium",
+      "title": "41 products have no custom_label_0 (product line)",
+      "finding": "Without labels, Shopping / Performance Max cannot split budget by product line.",
+      "recommended_action": "Set custom_label_0 to the product line (OATS-BBO, OATS-HPO, OATS-ZAS, CD, PANCAKE, COMBO, ACCESSORY).",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Data sources > Rules (or Shopify metafield mm-google-shopping.custom_label_0)",
+        "steps": [
+          "Create a rule mapping title keywords to the product line label"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "shopify_ZZ_8771273654410_47363565158538",
+          "title": "Protogrow Stainless Steel Bowl with Lid & Spoon | 500ml"
+        },
+        {
+          "product_id": "shopify_ZZ_8771236266122_47363506143370",
+          "title": "Protogrow Bhim Banana Oats Jar + Stainless Steel Bowl Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_8701478174858_47192298651786",
+          "title": "Protogrow Chocolate Health Drink Combo | 200g Jar + 300g Box"
+        },
+        {
+          "product_id": "shopify_ZZ_8915109183626_47817487417482",
+          "title": "Protogrow Oats Combo | Bhim Banana Pineapple & Strawberry"
+        },
+        {
+          "product_id": "shopify_ZZ_9011921485962_47916964905098",
+          "title": "Protogrow Instant Oats Cups Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_8727447699594_47279595585674",
+          "title": "Protogrow Bhim Banana Oats Value Pack | 1kg + Free Bowl"
+        },
+        {
+          "product_id": "shopify_ZZ_8915079757962_47817448980618",
+          "title": "Protogrow Oats Combo Jar | Bhim Banana Pineapple & Strawberry"
+        },
+        {
+          "product_id": "shopify_ZZ_8932215226506_47849792307338",
+          "title": "Instant Strawberry Oats Cups (Pack of 5 x 60g)"
+        },
+        {
+          "product_id": "shopify_ZZ_8619455807626_46496635420810",
+          "title": "Protogrow Chocolate Health Drink for Kids | Bhim Banana & Brahmi"
+        },
+        {
+          "product_id": "shopify_ZZ_8628126384266_46522010566794",
+          "title": "Protogrow Choco Banana & Strawberry Pancake Mix Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_9055166529674_49248422822026",
+          "title": "Protogrow Pineapple & Strawberry Oats Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_8699762344074_47189069234314",
+          "title": "Bhim Banana Ready-to-Eat Oats Pack of 3 – 300g Jars with Bowl"
+        },
+        {
+          "product_id": "shopify_ZZ_8743073251466_47313457152138",
+          "title": "Protogrow High-Protein Double Chocolate Oats"
+        },
+        {
+          "product_id": "shopify_ZZ_8650511679626_46759029014666",
+          "title": "Protogrow Chocolate Health Drink for Kids | Brahmi Ashwagandha & Turmeric"
+        },
+        {
+          "product_id": "shopify_ZZ_8628125368458_46522009288842",
+          "title": "Protogrow Choco Banana Pancake Mix Pack of 2"
+        },
+        {
+          "product_id": "shopify_ZZ_8619464622218_46496656097418",
+          "title": "Bhim Banana Ready-to-Eat Oats – 300g Jar"
+        },
+        {
+          "product_id": "shopify_ZZ_8771265134730_47363544219786",
+          "title": "Protogrow Bhim Banana Oats + Stainless Steel Bowl Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_8628127858826_46522012205194",
+          "title": "Protogrow Bhim Banana Oats Pack of 2"
+        },
+        {
+          "product_id": "shopify_ZZ_8848704667786_47614306943114",
+          "title": "Protogrow Strawberry Oats Jar"
+        },
+        {
+          "product_id": "shopify_ZZ_8628122157194_46521999458442",
+          "title": "Protogrow Instant Bhim Banana Oats Cups"
+        },
+        {
+          "product_id": "shopify_ZZ_8619461181578_46496648429706",
+          "title": "Protogrow Choco Banana Pancake Mix"
+        },
+        {
+          "product_id": "shopify_ZZ_8628095844490_46521946669194",
+          "title": "Protogrow Chocolate Health Drink Pack of 3 + Free Sipper"
+        },
+        {
+          "product_id": "shopify_ZZ_9070159200394_49462207676554",
+          "title": "Protogrow Chocolate Health Drink for Kids | High Protein Drink Mix"
+        },
+        {
+          "product_id": "shopify_ZZ_8620814499978_46501253054602",
+          "title": "Protogrow Strawberry Pancake Mix"
+        },
+        {
+          "product_id": "shopify_ZZ_8701471424650_47192285085834",
+          "title": "Protogrow Diabetic-Friendly Oats | Monk Fruit & Millets"
+        },
+        {
+          "product_id": "shopify_ZZ_9070155333770_49462199943306",
+          "title": "Bhim Banana Ready-to-Eat Oats - 400g Pouch"
+        },
+        {
+          "product_id": "shopify_ZZ_8628097384586_46521949290634",
+          "title": "Protogrow Chocolate Drink & Choco Banana Pancake Mix Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_9122023243914_49571332292746",
+          "title": "Protogrow Zero Added Sugar Oats"
+        },
+        {
+          "product_id": "shopify_ZZ_8792465571978_47410928681098",
+          "title": "Protogrow Pineapple Oats Jar"
+        },
+        {
+          "product_id": "shopify_ZZ_8628091584650_46521939853450",
+          "title": "Protogrow Chocolate Drink & Bhim Banana Oats Combo"
+        },
+        {
+          "product_id": "shopify_ZZ_8792468914314_47410932220042",
+          "title": "Protogrow Pineapple Oats"
+        },
+        {
+          "product_id": "shopify_ZZ_8727461232778_47279609151626",
+          "title": "Protogrow Chocolate Health Drink Value Pack | 750g + Free Sipper"
+        },
+        {
+          "product_id": "shopify_ZZ_8848708599946_47614324408458",
+          "title": "Protogrow Strawberry Oats"
+        },
+        {
+          "product_id": "shopify_ZZ_8932215193738_47849792241802",
+          "title": "Protogrow Instant Pineapple Oats Cups"
+        },
+        {
+          "product_id": "shopify_ZZ_9153575387274_49635505897610",
+          "title": "Double Chocolate High Protein Oats 50g (Pack of 5)"
+        },
+        {
+          "product_id": "shopify_ZZ_9160767438986_49660293611658",
+          "title": "Strawberry High Protein Oats 50g (Pack of 5)"
+        },
+        {
+          "product_id": "shopify_ZZ_9160701149322_49660221194378",
+          "title": "High Protein Pineapple Oats 5 x 50g"
+        },
+        {
+          "product_id": "shopify_ZZ_8650512924810_46759033110666",
+          "title": "Protogrow Chocolate Health Drink Pack of 2"
+        },
+        {
+          "product_id": "shopify_ZZ_9122014363786_49754188054666",
+          "title": "Procan-D Kids Nutrition Cereal | Moong Dal & Rice"
+        },
+        {
+          "product_id": "shopify_ZZ_9208717639818_49776495558794",
+          "title": "Protogrow Kathal Grove Jackfruit Pancake Mix"
+        },
+        {
+          "product_id": "shopify_ZZ_8619458920586_50253404668042",
+          "title": "Protogrow Bhim Banana Oats | Ready-to-Eat Oats Breakfast"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P006",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "PERF-002",
+      "severity": "medium",
+      "title": "3 hero products with strong CTR",
+      "finding": "100+ clicks and CTR above 1.5%.",
+      "recommended_action": "Tag custom_label_1=HERO and give them their own asset group / campaign with a higher budget share.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center label rule, then Google Ads",
+        "steps": [
+          "Create the label",
+          "Build a HERO listing group"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "PTG-COMBO-BBO-BOWL",
+          "title": "Bhim Banana Oats Value Pack – 1kg with Bowl",
+          "impressions": 12422,
+          "clicks": 336,
+          "ctr_pct": 2.7
+        },
+        {
+          "product_id": "PTG-BBO-300G-JAR",
+          "title": "Bhim Banana Ready-to-Eat Oats – 300g Jar",
+          "impressions": 15862,
+          "clicks": 376,
+          "ctr_pct": 2.37
+        },
+        {
+          "product_id": "PTG-CD-200G-JAR",
+          "title": "Fitbhim Chocolate Nutrition Drink 200g",
+          "impressions": 9289,
+          "clicks": 164,
+          "ctr_pct": 1.77
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P007",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-006",
+      "severity": "low",
+      "title": "All products disapproved for local destinations (LOCAL_INVENTORY_ADS, FREE_LOCAL_LISTINGS)",
+      "finding": "Every item is disapproved for local inventory / free local listings. This is normal if you have no physical store linked, but it inflates the disapproval count and hides real issues.",
+      "recommended_action": "If Pro-To-Grow has no retail store on Google Business Profile: turn off the local destinations. If it does: link the Business Profile and submit a local inventory feed.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Settings > Add-ons / Destinations",
+        "steps": [
+          "Disable Local inventory ads and Free local listings"
+        ]
+      },
+      "evidence": [
+        {
+          "reporting_context": "LOCAL_INVENTORY_ADS",
+          "country": "IN",
+          "active": "0",
+          "disapproved": "79",
+          "pending": "0",
+          "expiring": "0"
+        },
+        {
+          "reporting_context": "FREE_LOCAL_LISTINGS",
+          "country": "IN",
+          "active": "0",
+          "disapproved": "79",
+          "pending": "0",
+          "expiring": "0"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P008",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "PERF-003",
+      "severity": "low",
+      "title": "2 products with impressions but zero clicks",
+      "finding": "No clicks at all over 30 days.",
+      "recommended_action": "Check price vs benchmark and image; consider excluding from Shopping if still zero after fixes.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Products",
+        "steps": [
+          "Review each item"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "PTG-BBO-CUPS-PI-5PK",
+          "title": "Pineapple Instant Oats Cups – Pack of 5",
+          "impressions": 589,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9055166529674_49248422822026",
+          "title": "Protogrow Pineapple & Strawberry Oats Combo",
+          "impressions": 13068,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P009",
+      "history": [
+        {
+          "at": "2026-09-28T19:58:58+00:00",
+          "event": "proposed"
+        }
+      ]
+    }
+  ]
+}
