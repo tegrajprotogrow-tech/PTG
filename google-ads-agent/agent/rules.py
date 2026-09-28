@@ -94,7 +94,7 @@ def mc_duplicates(products, cfg):
 
 def mc_brand(products, cfg):
     canonical = cfg["account"]["canonical_brand"]
-    wrong = [p for p in products if p["brand"] and p["brand"] != canonical]
+    wrong = [p for p in products if p["brand"] and p["brand"].lower() != canonical.lower()]
     if not wrong:
         return []
     counts = {}
@@ -248,3 +248,109 @@ def ads_budget(campaigns, cfg):
                         "amount_micros": int(new * 1_000_000)}},
             c, risk="medium"))
     return out
+
+
+# ---------------------------------------------------------------- Shopify (source of the Google feed)
+
+PRODUCT_LINES = [
+    # (label, product_type, keywords that must all appear) — first match wins
+    ("INFANT-FORMULA", "Baby & Kids > Infant Formula", ["formula"]),
+    ("BABY-CEREAL", "Baby & Kids > Baby Cereal", ["procan"]),
+    ("OATS-HPO", "Breakfast > Oats > High-Protein Oats", ["protein"]),
+    ("OATS-ZAS", "Breakfast > Oats > Sugar-Free Oats", ["monk fruit"]),
+    ("CD", "Health Drinks > Chocolate Health Drink", ["health drink"]),
+    ("PANCAKE", "Breakfast > Pancake Mix", ["pancake"]),
+    ("SPREAD", "Spreads > Chocolate Hazelnut Spread", ["hazelnut"]),
+    ("OATS-CUPS", "Breakfast > Oats > Instant Oats Cups", ["cups"]),
+    ("OATS-BBO", "Breakfast > Oats > Ready-to-Eat Oats", ["oats"]),
+    ("ACCESSORY", "Accessories > Bowls", ["bowl"]),
+    ("CEREAL", "Breakfast > Cereal", ["cereal"]),
+]
+
+
+def product_line(title):
+    t = (title or "").lower()
+    for label, ptype, words in PRODUCT_LINES:
+        if all(w in t for w in words):
+            return label, ptype
+    return "OTHER", "Other"
+
+
+def _active(shop):
+    return [p for p in shop if p["status"] == "ACTIVE"]
+
+
+def shop_vendor(shop, cfg):
+    canonical = cfg["account"]["canonical_brand"]
+    wrong = [p for p in shop if p["vendor"].lower() != canonical.lower()]
+    if not wrong:
+        return []
+    return [_proposal(
+        "SHOP-001", "high", f"{len(wrong)} Shopify products have vendor '{wrong[0]['vendor']}' (sent to Google as brand)",
+        "Shopify vendor becomes the Google brand. 'My Store' is the Shopify default. It breaks brand matching "
+        "and branded search, and it makes the products look like an unbranded reseller.",
+        f"Set vendor = '{canonical}' on each product. Only this field changes. Title, price and stock stay as they are.",
+        {"channel": "shopify", "mutation": "productUpdate",
+         "items": [{"id": f"gid://shopify/Product/{p['product_id']}", "vendor": canonical} for p in wrong]},
+        [{"product_id": p["product_id"], "title": p["title"], "status": p["status"], "vendor": p["vendor"]} for p in wrong],
+        risk="low")]
+
+
+def shop_product_type(shop, cfg):
+    empty = [p for p in _active(shop) if not p["product_type"]]
+    if not empty:
+        return []
+    items, ev = [], []
+    for p in empty:
+        _, ptype = product_line(p["title"])
+        items.append({"id": f"gid://shopify/Product/{p['product_id']}", "productType": ptype})
+        ev.append({"product_id": p["product_id"], "title": p["title"], "new_product_type": ptype})
+    return [_proposal(
+        "SHOP-002", "medium", f"{len(empty)} active products have an empty product type",
+        "Google uses product_type for relevance and for listing groups in Shopping and Performance Max. "
+        "All active products currently send it blank.",
+        "Set a product type hierarchy on each product (see evidence). Store navigation is not affected.",
+        {"channel": "shopify", "mutation": "productUpdate", "items": items},
+        ev, risk="low")]
+
+
+def compliance_infant(shop, cfg):
+    hits = [p for p in _active(shop) if product_line(p["title"])[0] in ("INFANT-FORMULA", "BABY-CEREAL")]
+    if not hits:
+        return []
+    return [_proposal(
+        "COMP-001", "high", f"{len(hits)} infant formula / baby food products may be restricted in Google ads (India)",
+        "India's IMS Act restricts advertising infant milk substitutes and infant foods, and Google Ads "
+        "policy restricts infant formula ads. Several of these items already show no title or a price of 0 "
+        "in Merchant Center, which is consistent with policy limits. Advertising them risks disapprovals "
+        "or account-level warnings.",
+        "Exclude these items from Shopping ads (custom_label_4 = EXCLUDE-ADS, and an exclusion in campaigns). "
+        "Keep them in free listings only if allowed. Check with your compliance or legal advisor. This is not legal advice.",
+        _manual("Merchant Center supplemental feed + Google Ads listing-group exclusion",
+                ["Confirm with legal which SKUs are for children under 2",
+                 "Approve the EXCLUDE-ADS label", "Agent adds the campaign exclusion once Google Ads is connected"]),
+        [{"product_id": p["product_id"], "title": p["title"]} for p in hits], risk="high")]
+
+
+def mc_sync_gap(shop, products, cfg):
+    mc = {p["product_id"].split("_")[2]: p for p in products if p["product_id"].lower().startswith("shopify_")}
+    gaps = []
+    for s in _active(shop):
+        m = mc.get(s["product_id"])
+        if m and (not m["product_title"] or rules_num(m["price"]) <= 0):
+            gaps.append({"product_id": s["product_id"], "shopify_title": s["title"], "shopify_price": s["price"],
+                         "mc_title": m["product_title"], "mc_price": m["price"]})
+    if not gaps:
+        return []
+    return [_proposal(
+        "SYNC-001", "high", f"{len(gaps)} products are live in Shopify but broken in Merchant Center",
+        "Shopify has a title and price, but Merchant Center receives no title and a price of 0. The Google & YouTube "
+        "channel sync is failing for these items, often because of a policy block or a missing required field.",
+        "In Shopify > Google & YouTube > Products, open each item and fix the reported issue, then resync. "
+        "If it's an infant or baby product, see COMP-001 first.",
+        _manual("Shopify > Sales channels > Google & YouTube", ["Open each product", "Read the issue", "Fix and resync"]),
+        gaps, risk="none")]
+
+
+def rules_num(v):
+    return _num(v)

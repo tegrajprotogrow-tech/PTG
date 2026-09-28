@@ -46,6 +46,22 @@ class RuleTests(unittest.TestCase):
         self.assertTrue(sa.guardrail_violations(p, CFG))
 
 
+class ProductLineTests(unittest.TestCase):
+    def test_classification(self):
+        self.assertEqual(rules.product_line("Progen Stage 1 Infant Formula – 400g")[0], "INFANT-FORMULA")
+        self.assertEqual(rules.product_line("Procan-D Banana & Dates Baby Cereal")[0], "BABY-CEREAL")
+        self.assertEqual(rules.product_line("High-Protein Double Chocolate Oats Value Pack – 750g")[0], "OATS-HPO")
+        self.assertEqual(rules.product_line("Zero Added Sugar Oats with Monk Fruit & Millets")[0], "OATS-ZAS")
+        self.assertEqual(rules.product_line("Stainless Steel Bowl with Lid & Spoon – 500ml")[0], "ACCESSORY")
+        self.assertEqual(rules.product_line("Bhim Banana Oats & Stainless Steel Bowl Combo")[0], "OATS-BBO")
+
+    def test_vendor_rule_is_case_insensitive(self):
+        shop = [{"product_id": "1", "title": "x", "status": "ACTIVE", "vendor": "Pro-to-grow"},
+                {"product_id": "2", "title": "y", "status": "ACTIVE", "vendor": "My Store"}]
+        out = rules.shop_vendor(shop, CFG)
+        self.assertEqual([i["id"] for i in out[0]["execution"]["items"]], ["gid://shopify/Product/2"])
+
+
 class ApprovalGateTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

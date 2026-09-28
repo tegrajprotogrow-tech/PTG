@@ -75,12 +75,17 @@ def analyze(date, cfg):
     status = read_csv("mc_status", date)
     campaigns = read_csv("ads_campaigns_14d", date)
     terms = read_csv("ads_search_terms_30d", date)
+    shop = read_csv("shopify_products", date)
 
     found = []
     if products:
         for rule in (rules.mc_broken_items, rules.mc_duplicates, rules.mc_brand,
                      rules.mc_gtin, rules.mc_custom_labels):
             found += rule(products, cfg)
+    if shop:
+        found += rules.shop_vendor(shop, cfg) + rules.shop_product_type(shop, cfg) + rules.compliance_infant(shop, cfg)
+        if products:
+            found += rules.mc_sync_gap(shop, products, cfg)
     if status:
         found += rules.mc_local_disapprovals(status, cfg)
     if perf:
@@ -89,6 +94,24 @@ def analyze(date, cfg):
         found += rules.ads_negative_keywords(terms, cfg)
     if campaigns:
         found += rules.ads_budget(campaigns, cfg)
+
+    feed = ROOT / "data" / "feeds" / f"{date}_supplemental_feed_DRAFT.tsv"
+    if feed.exists():
+        with feed.open(encoding="utf-8") as f:
+            rows = list(csv.DictReader(f, delimiter="\t"))
+        found.append({
+            "rule": "FEED-001", "severity": "high",
+            "title": f"Link supplemental feed: {sum(1 for r in rows if r['title'])} new Google titles, "
+                     f"brand/product_type/labels for {len(rows)} products",
+            "finding": "Fixes brand, product_type, product-line labels, HERO/LOW-CTR labels and ad exclusions "
+                       "for Merchant Center in one step, without changing store titles or prices.",
+            "recommended_action": "Review the titles in the draft. After approval, the agent creates it as a Google Sheet "
+                                  "and you link it once in Merchant Center > Data sources > Add supplemental source.",
+            "execution": {"channel": "google_sheets", "file": str(feed.relative_to(ROOT)),
+                          "then": "Merchant Center > Data sources > Supplemental > Google Sheets (daily fetch)"},
+            "evidence": [{"id": r["id"], "title": r["title"]} for r in rows if r["title"]],
+            "risk": "low", "status": rules.PENDING,
+        })
 
     order = {"high": 0, "medium": 1, "low": 2}
     found.sort(key=lambda p: order.get(p["severity"], 3))
@@ -100,6 +123,7 @@ def analyze(date, cfg):
         "generated_at": now(),
         "sources": {
             "merchant_center": bool(products or perf or status),
+            "shopify": bool(shop),
             "google_ads": bool(campaigns or terms),
         },
         "proposals": found,
