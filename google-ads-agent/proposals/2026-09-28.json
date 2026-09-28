@@ -1,6 +1,6 @@
 {
   "date": "2026-09-28",
-  "generated_at": "2026-09-28T21:28:04+00:00",
+  "generated_at": "2026-09-28T21:44:32+00:00",
   "sources": {
     "merchant_center": true,
     "shopify": true,
@@ -64,7 +64,7 @@
       "id": "P001",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -200,12 +200,18 @@
         }
       ],
       "risk": "medium",
-      "status": "PENDING",
+      "status": "APPROVED",
       "id": "P002",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
+        },
+        {
+          "at": "2026-09-28T21:44:37+00:00",
+          "event": "approved",
+          "by": "dmm@protogrow.in",
+          "note": "User: apply changes related to only Merchant Center; soften health-claim titles"
         }
       ]
     },
@@ -324,12 +330,18 @@
         }
       ],
       "risk": "low",
-      "status": "PENDING",
+      "status": "REJECTED",
       "id": "P003",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
+        },
+        {
+          "at": "2026-09-28T21:44:37+00:00",
+          "event": "rejected",
+          "by": "dmm@protogrow.in",
+          "note": "User: no live Shopify store changes. Brand + product_type are fixed in Merchant Center via the P007 supplemental feed instead"
         }
       ]
     },
@@ -383,7 +395,7 @@
       "id": "P004",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -452,7 +464,7 @@
       "id": "P005",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -548,7 +560,7 @@
       "id": "P006",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -603,7 +615,7 @@
         },
         {
           "id": "shopify_ZZ_8701471424650_47192285085834",
-          "title": "Pro-To-Grow Diabetic Friendly Oats 300g | Monk Fruit & Millets | No Added Sugar | High Fibre"
+          "title": "Pro-To-Grow Oats with Monk Fruit & Millets 300g | No Added Sugar | High Fibre | Healthy Breakfast"
         },
         {
           "id": "shopify_ZZ_8743073251466_47313457152138",
@@ -619,16 +631,27 @@
         },
         {
           "id": "shopify_ZZ_9122023243914_49571332292746",
-          "title": "Pro-To-Grow Zero Added Sugar Oats 400g | Monk Fruit & Millets | High Fibre | Diabetic Friendly Breakfast"
+          "title": "Pro-To-Grow Zero Added Sugar Oats 400g | Monk Fruit & Millets | High Fibre | Healthy Breakfast"
         }
       ],
       "risk": "low",
-      "status": "PENDING",
+      "status": "APPLIED",
       "id": "P007",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
+        },
+        {
+          "at": "2026-09-28T21:44:37+00:00",
+          "event": "approved",
+          "by": "dmm@protogrow.in",
+          "note": "User: apply changes related to only Merchant Center; soften health-claim titles"
+        },
+        {
+          "at": "2026-09-28T21:46:02+00:00",
+          "event": "applied",
+          "result": "Created Google Sheets: titles 12nDSa0qaEuoCc1LYTZbNSAjGxSvIq2P9ezRJ092IIpg (14 rows), attributes 1ueCXep3whov23Dqe1RQDTiRpsVEL9D6ywC-AUPUnlgs (47 rows). Split so blank titles never overwrite. EXCLUDE-ADS label left out (P004 not approved). Awaiting user to link in Merchant Center."
         }
       ]
     },
@@ -683,7 +706,7 @@
       "id": "P008",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -770,7 +793,7 @@
       "id": "P009",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -959,7 +982,7 @@
       "id": "P010",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -1429,12 +1452,18 @@
         }
       ],
       "risk": "low",
-      "status": "PENDING",
+      "status": "REJECTED",
       "id": "P011",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
+        },
+        {
+          "at": "2026-09-28T21:44:37+00:00",
+          "event": "rejected",
+          "by": "dmm@protogrow.in",
+          "note": "User: no live Shopify store changes. Brand + product_type are fixed in Merchant Center via the P007 supplemental feed instead"
         }
       ]
     },
@@ -1480,7 +1509,7 @@
       "id": "P012",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
@@ -1517,12 +1546,18 @@
         }
       ],
       "risk": "none",
-      "status": "PENDING",
+      "status": "APPROVED",
       "id": "P013",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
+        },
+        {
+          "at": "2026-09-28T21:44:37+00:00",
+          "event": "approved",
+          "by": "dmm@protogrow.in",
+          "note": "User: apply changes related to only Merchant Center; soften health-claim titles"
         }
       ]
     },
@@ -1560,7 +1595,7 @@
       "id": "P014",
       "history": [
         {
-          "at": "2026-09-28T21:28:04+00:00",
+          "at": "2026-09-28T21:44:32+00:00",
           "event": "proposed"
         }
       ]
