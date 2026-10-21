@@ -13,11 +13,37 @@ CFG = json.loads((Path(__file__).resolve().parent.parent / "config" / "guardrail
 
 class RuleTests(unittest.TestCase):
     def test_every_proposal_starts_pending(self):
-        terms = [{"search_term": "free oats sample", "campaign_id": "111", "cost": "900", "clicks": "40", "conversions": "0"}]
+        terms = [{"search_term": "free sample", "campaign_id": "111", "cost": "900", "clicks": "40", "conversions": "0"}]
         out = rules.ads_negative_keywords(terms, CFG)
         self.assertEqual(len(out), 1)
         self.assertEqual(out[0]["status"], "PENDING")
         self.assertEqual(out[0]["execution"]["action"], "push_negative_keywords")
+
+    def test_brand_and_core_terms_never_negated(self):
+        terms = [{"search_term": "pro to grow", "campaign_id": "1", "campaign_status": "ENABLED", "cost": "900", "clicks": "40", "conversions": "0"},
+                 {"search_term": "protein oats", "campaign_id": "1", "campaign_status": "ENABLED", "cost": "900", "clicks": "40", "conversions": "0"}]
+        out = rules.ads_negative_keywords(terms, CFG)
+        self.assertEqual([p["rule"] for p in out], ["ADS-001W"])
+
+    def test_paused_campaign_terms_ignored(self):
+        terms = [{"search_term": "food beverages", "campaign_id": "1", "campaign_status": "PAUSED", "cost": "900", "clicks": "40", "conversions": "0"}]
+        self.assertEqual(rules.ads_negative_keywords(terms, CFG), [])
+
+    def test_budget_not_cut_when_underspending(self):
+        camps = [{"campaign": "S", "campaign_id": "9", "cost": "8460", "conversion_value": "7410", "daily_budget": "2000",
+                  "avg_daily_spend": "604", "budget_limited": "true", "conversions": "9"}]
+        out = rules.ads_budget(camps, CFG)
+        self.assertEqual([p["rule"] for p in out], ["ADS-003"])
+
+    def test_tracking_value_gap_detected(self):
+        acts = [{"name": "Purchase", "primary_for_goal": "True", "category": "PURCHASE", "conversions_30d": "64", "conv_value_30d": "28000"}]
+        out = rules.ads_tracking(acts, [{"average_order_value": "795"}], CFG)
+        self.assertEqual(out[0]["rule"], "ADS-004")
+
+    def test_different_pack_sizes_are_not_duplicates(self):
+        prods = [{"product_id": "PTG-A", "product_title": "Pineapple High Protein Oats Pack of 5 50g", "price": "1", "brand": "x", "gtin": "", "custom_label_0": ""},
+                 {"product_id": "shopify_ZZ_1_2", "product_title": "Pineapple High Protein Oats Pack of 3 50g", "price": "1", "brand": "x", "gtin": "", "custom_label_0": ""}]
+        self.assertEqual(rules.mc_duplicates(prods, CFG), [])
 
     def test_converting_term_not_negated(self):
         terms = [{"search_term": "protein oats", "campaign_id": "1", "cost": "900", "clicks": "40", "conversions": "2"}]
@@ -54,6 +80,8 @@ class ProductLineTests(unittest.TestCase):
         self.assertEqual(rules.product_line("Zero Added Sugar Oats with Monk Fruit & Millets")[0], "OATS-ZAS")
         self.assertEqual(rules.product_line("Stainless Steel Bowl with Lid & Spoon – 500ml")[0], "ACCESSORY")
         self.assertEqual(rules.product_line("Bhim Banana Oats & Stainless Steel Bowl Combo")[0], "OATS-BBO")
+        self.assertEqual(rules.product_line("Bhim Banana Ready-to-Eat Oats 1kg + Free Protein Oats")[0], "OATS-BBO")
+        self.assertEqual(rules.product_line("FitBhim Sports Protein Drink Double Chocolate 200g")[0], "SPORTS-DRINK")
 
     def test_vendor_rule_is_case_insensitive(self):
         shop = [{"product_id": "1", "title": "x", "status": "ACTIVE", "vendor": "Pro-to-grow"},

@@ -2,10 +2,11 @@
   "_comment": "Hard limits the agent can never exceed, even on approved proposals. Edit these to tighten or relax them.",
   "account": {
     "merchant_center_id": "5775540276",
-    "google_ads_customer_id": null,
+    "google_ads_customer_id": "2943175872",
     "currency": "INR",
     "country": "IN",
-    "canonical_brand": "Pro-To-Grow"
+    "canonical_brand": "Pro-To-Grow",
+    "google_ads_connection": "composio googleads (account googleads_patina-fitly)"
   },
   "approval": {
     "required_for_every_change": true,
@@ -15,7 +16,8 @@
   "budget": {
     "max_daily_change_pct": 20,
     "max_daily_budget_inr": 5000,
-    "min_days_between_budget_changes": 7
+    "min_days_between_budget_changes": 7,
+    "min_spend_utilisation_for_cut_pct": 70
   },
   "bidding": {
     "target_roas": 3.0,
@@ -26,7 +28,23 @@
   "keywords": {
     "negative_min_cost_inr": 300,
     "negative_min_clicks": 15,
-    "max_negatives_per_run": 25
+    "max_negatives_per_run": 25,
+    "protected_terms": [
+      "pro to grow",
+      "protogrow",
+      "pro-to-grow",
+      "fitbhim",
+      "fit bhim",
+      "bhim banana",
+      "procan",
+      "progen",
+      "kathal grove",
+      "oats",
+      "protein",
+      "pancake",
+      "health drink"
+    ],
+    "_protected_comment": "Search terms containing any of these are never auto-proposed as negatives (brand + core product words). Review them by hand."
   },
   "merchant_center": {
     "low_ctr_min_impressions": 20000,
@@ -41,5 +59,24 @@
     "remove_keywords",
     "create_campaign with status ENABLED",
     "any change to a campaign in its first 14 days (learning period)"
-  ]
+  ],
+  "tracking": {
+    "min_value_to_aov_ratio": 0.7,
+    "non_purchase_primary_categories": [
+      "PAGE_VIEW",
+      "YOUTUBE_FOLLOW_ON_VIEWS",
+      "ENGAGEMENT",
+      "ADD_TO_CART",
+      "BEGIN_CHECKOUT"
+    ]
+  },
+  "products": {
+    "waste_min_cost_inr": 500,
+    "waste_min_clicks": 40,
+    "waste_max_roas": 0.25
+  },
+  "disabled_rules": {
+    "SHOP-001": "Rejected 2026-09-28: no live Shopify store changes (brand handled by supplemental feed)",
+    "SHOP-002": "Rejected 2026-09-28: no live Shopify store changes (product_type handled by supplemental feed)"
+  }
 }

@@ -25,12 +25,13 @@ python3 -m unittest discover -s tests                    # run the tests
 ```
 Python 3.9+ and the standard library are all it needs.
 
-## Connections (via Windsor.ai)
+## Connections
 | Account | Status |
 |---|---|
 | Merchant Center `5775540276` (Pro-to-grow) | ✅ connected, read-only |
-| Google Ads / Manager (MCC) account | ⛔ not connected yet. Authorize at https://onboard.windsor.ai/connect?connector=google_ads&next=/google_ads/authorize and choose the MCC so all client accounts are included |
+| Google Ads `294-317-5872` (PRO-TO-GROW 2026) | ✅ connected via Composio (`googleads`). Accounts 783-909-8191 and 389-160-9052 return permission denied |
+| Shopify `protogrow.in` | ✅ read-only analytics (orders/AOV) for tracking checks |
 
-Once Google Ads is connected, the agent can execute these actions (only after approval): pause or enable campaigns, ad groups and ads;
-set budget, tROAS, tCPA and max CPC; push negative keywords; create paused campaigns, ad groups and RSAs; set geo, language and ad schedule.
+Google Ads data is read through Composio. Writing changes back (budgets, negatives, pauses) is only done after approval, and the
+Composio write path has not been exercised yet; the first approved Ads change will be applied and verified one item at a time.
 Merchant Center changes go through Shopify or manual steps. Windsor does not provide write access to Merchant Center.

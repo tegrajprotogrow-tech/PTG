@@ -47,6 +47,45 @@ def read_csv(name, date):
         return list(csv.DictReader(f))
 
 
+def _read_any(path):
+    if not path.exists():
+        return None
+    with path.open(newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+ATTRIBUTES_SHEET = "1ueCXep3whov23Dqe1RQDTiRpsVEL9D6ywC-AUPUnlgs"
+
+
+def _feed_append(date, products, cfg):
+    """Shopify-sourced products that the linked attributes sheet doesn't cover yet (no product-line label in MC)."""
+    rows = []
+    for p in products:
+        if not p["product_id"].lower().startswith("shopify_") or p.get("custom_label_0") or not p["product_title"]:
+            continue
+        label, ptype = rules.product_line(p["product_title"])
+        rows.append({"id": p["product_id"], "brand": cfg["account"]["canonical_brand"], "product_type": ptype,
+                     "custom_label_0": label, "custom_label_1": ""})
+    if not rows:
+        return []
+    out = ROOT / "data" / "feeds" / f"{date}_attributes_append.csv"
+    with out.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, ["id", "brand", "product_type", "custom_label_0", "custom_label_1"])
+        w.writeheader()
+        w.writerows(rows)
+    return [{
+        "rule": "FEED-002", "severity": "medium",
+        "title": f"Add {len(rows)} new products to the linked Brand/Type/Labels sheet",
+        "finding": "These products were added to Shopify after the 2026-09-28 feed: brand shows 'Pro-to-grow' and they "
+                   "have no product_type or product-line label, so Shopping can't group or report them.",
+        "recommended_action": "Append the rows to the existing sheet (same file, same link; Merchant Center picks them up "
+                              "at the next daily fetch). Nothing else in the sheet changes.",
+        "execution": {"channel": "google_sheets", "action": "append_rows", "spreadsheet_id": ATTRIBUTES_SHEET,
+                      "file": str(out.relative_to(ROOT))},
+        "evidence": rows, "risk": "low", "status": rules.PENDING,
+    }]
+
+
 def proposals_path(date):
     return PROPOSALS / f"{date}.json"
 
@@ -76,12 +115,21 @@ def analyze(date, cfg):
     campaigns = read_csv("ads_campaigns_14d", date)
     terms = read_csv("ads_search_terms_30d", date)
     shop = read_csv("shopify_products", date)
+    actions = read_csv("ads_conversion_actions", date)
+    sales = read_csv("shopify_sales_30d", date)
+    items = read_csv("ads_products_30d", date)
+    titles = _read_any(ROOT / "data" / "feeds" / "live_titles_sheet.csv")
 
     found = []
     if products:
         for rule in (rules.mc_broken_items, rules.mc_duplicates, rules.mc_brand,
                      rules.mc_gtin, rules.mc_custom_labels):
             found += rule(products, cfg)
+        if titles:
+            found += rules.mc_titles_not_applied(products, titles, cfg)
+        if not shop:
+            found += rules.mc_compliance(products, cfg)
+        found += _feed_append(date, products, cfg)
     if shop:
         found += rules.shop_vendor(shop, cfg) + rules.shop_product_type(shop, cfg) + rules.compliance_infant(shop, cfg)
         if products:
@@ -89,11 +137,15 @@ def analyze(date, cfg):
     if status:
         found += rules.mc_local_disapprovals(status, cfg)
     if perf:
-        found += rules.mc_performance(perf, cfg)
+        found += rules.mc_performance(perf, cfg, products)
     if terms:
         found += rules.ads_negative_keywords(terms, cfg)
     if campaigns:
-        found += rules.ads_budget(campaigns, cfg)
+        found += rules.ads_budget(campaigns, cfg) + rules.ads_not_serving(campaigns, cfg)
+    if actions:
+        found += rules.ads_tracking(actions, sales, cfg)
+    if items:
+        found += rules.ads_product_waste(items, cfg)
 
     feed = ROOT / "data" / "feeds" / f"{date}_supplemental_feed_DRAFT.tsv"
     if feed.exists():
@@ -113,6 +165,16 @@ def analyze(date, cfg):
             "risk": "low", "status": rules.PENDING,
         })
 
+    disabled = cfg.get("disabled_rules", {})
+    found = [p for p in found if p["rule"] not in disabled]
+    waste = {e["item_id"].lower() for p in found if p["rule"] == "ADS-007" for e in p["evidence"]}
+    for p in found:
+        if p["rule"] == "PERF-002":  # a high-CTR product that loses money in Ads is not a hero
+            p["evidence"] = [e for e in p["evidence"] if e["product_id"].lower() not in waste]
+    found = [p for p in found if not (p["rule"] == "PERF-002" and not p["evidence"])]
+    if any(p["rule"] == "FEED-002" for p in found):
+        found = [p for p in found if p["rule"] != "MC-005"]  # same products, FEED-002 is the fix
+
     order = {"high": 0, "medium": 1, "low": 2}
     found.sort(key=lambda p: order.get(p["severity"], 3))
     for i, p in enumerate(found, 1):
@@ -124,7 +186,7 @@ def analyze(date, cfg):
         "sources": {
             "merchant_center": bool(products or perf or status),
             "shopify": bool(shop),
-            "google_ads": bool(campaigns or terms),
+            "google_ads": bool(campaigns or terms or actions or items),
         },
         "proposals": found,
     }

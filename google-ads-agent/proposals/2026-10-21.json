@@ -1,0 +1,891 @@
+{
+  "date": "2026-10-21",
+  "generated_at": "2026-10-21T17:58:30+00:00",
+  "sources": {
+    "merchant_center": true,
+    "shopify": false,
+    "google_ads": true
+  },
+  "proposals": [
+    {
+      "rule": "MC-001",
+      "severity": "high",
+      "title": "9 products have no title or a price of 0",
+      "finding": "Items without a title or with price 0 cannot serve and lower account quality.",
+      "recommended_action": "Fix title and price in the source (Shopify / feed), or exclude these items from the Google channel.",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify > Products (or Merchant Center > Products)",
+        "steps": [
+          "Open each item listed in evidence",
+          "Add title + price, or unpublish from the Google & YouTube channel"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "shopify_ZZ_8620818530442_46501271470218",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8701476962442_47192296980618",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8667200782474_47029307408522",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9122015314058_49571323412618",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "shopify_ZZ_9092922736778_49507350478986",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "shopify_ZZ_8620817547402_46501266522250",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "PTG-SPR-HAZEL-2PK",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "PTG-HPO-DC-5PACK",
+          "brand": "Pro-To-Grow"
+        },
+        {
+          "product_id": "PTG-SPR-HAZEL-300G",
+          "brand": "Pro-To-Grow"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P001",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-002",
+      "severity": "high",
+      "title": "2 products appear to be listed twice (Shopify feed + PTG feed)",
+      "finding": "The same product is submitted by two data sources. Duplicates split clicks and history, and can compete against each other in the same auction.",
+      "recommended_action": "Pick ONE primary data source per product. Recommended: keep the PTG-* feed (it has custom labels, GTINs and numeric categories) and exclude the matching Shopify items from Google.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Products > Data sources",
+        "steps": [
+          "Confirm each pair in evidence is really the same SKU",
+          "Exclude the Shopify duplicate (or delete the PTG item and move its labels to Shopify)"
+        ]
+      },
+      "evidence": [
+        {
+          "ptg_feed_id": "PTG-CD-750G-VALUE",
+          "shopify_id": "shopify_ZZ_8727461232778_47279609151626",
+          "title": "Chocolate Health Drink Value Pack – 750g with Complimentary Sipper | Pro-To-Grow",
+          "similarity": 0.78
+        },
+        {
+          "ptg_feed_id": "PTG-PAN-3FLAV-2PK",
+          "shopify_id": "shopify_ZZ_8628126384266_46522010566794",
+          "title": "Choco Banana and Strawberry Healthy Pancake Mix Combo – 2 x 250g | Pro-To-Grow",
+          "similarity": 0.71
+        }
+      ],
+      "risk": "medium",
+      "status": "PENDING",
+      "id": "P002",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "COMP-001",
+      "severity": "high",
+      "title": "7 infant formula / baby food products: decision still pending",
+      "finding": "Still open from 2026-09-28 (waiting on legal). India's IMS Act and Google's policy restrict advertising infant formula and infant foods. 6 of these have no title in Merchant Center (blocked).",
+      "recommended_action": "When legal confirms, approve an EXCLUDE-ADS label for these items. This is not legal advice.",
+      "execution": {
+        "channel": "manual",
+        "where": "Legal review",
+        "steps": [
+          "Confirm which SKUs are for children under 2"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "shopify_ZZ_8620818530442_46501271470218",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_8701476962442_47192296980618",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_8667200782474_47029307408522",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_9122015314058_49571323412618",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_9092922736778_49507350478986",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_8620817547402_46501266522250",
+          "title": ""
+        },
+        {
+          "product_id": "shopify_ZZ_9122014363786_49754188054666",
+          "title": "Procan-D Kids Nutrition Cereal | Moong Dal & Rice"
+        }
+      ],
+      "risk": "high",
+      "status": "PENDING",
+      "id": "P003",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "PERF-001",
+      "severity": "high",
+      "title": "18 products get lots of impressions but almost no clicks",
+      "finding": "CTR below 0.15% on 20000+ impressions (30 days). Usually a weak main image, a vague title, or a price that looks high next to competitors.",
+      "recommended_action": "1) Rewrite titles as: Brand + Product + Key benefit + Size (front-load the search words). 2) Use a clean white-background pack shot as the main image. 3) Tag these custom_label_1=LOW-CTR so Ads can bid them down until fixed.",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify product title/image + Merchant Center label rule",
+        "steps": [
+          "Review each item",
+          "Approve new title text (agent will draft it on request)"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "SHOPIFY_ZZ_8915079757962_47817448980618",
+          "title": "Pro-To-Grow Ready-to-Eat Oats Combo 3 x 300g Jars | Bhim Banana Pineapple Strawberry | No Refined Sugar",
+          "impressions": 202452,
+          "clicks": 90,
+          "ctr_pct": 0.04
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8699762344074_47189069234314",
+          "title": "Bhim Banana Ready-to-Eat Oats Pack of 3 – 300g Jars with Complimentary Bowl",
+          "impressions": 197679,
+          "clicks": 166,
+          "ctr_pct": 0.08
+        },
+        {
+          "product_id": "PTG-BYOB-BOX6",
+          "title": "Build Your Own Box – Pack of 6 | Pro-To-Grow High-Protein Oats | Mix Any Flavours",
+          "impressions": 153241,
+          "clicks": 135,
+          "ctr_pct": 0.09
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8915109183626_47817487417482",
+          "title": "Pro-To-Grow Ready-to-Eat Oats Combo 3 x 300g Boxes | Bhim Banana Pineapple Strawberry | No Refined Sugar",
+          "impressions": 147798,
+          "clicks": 45,
+          "ctr_pct": 0.03
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8701471424650_47192285085834",
+          "title": "Pro-To-Grow Oats with Monk Fruit & Millets 300g | No Added Sugar | High Fibre | Healthy Breakfast",
+          "impressions": 118362,
+          "clicks": 57,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8628127858826_46522012205194",
+          "title": "Protogrow Bhim Banana Oats Pack of 2 | Ready-to-Eat Oats",
+          "impressions": 97393,
+          "clicks": 90,
+          "ctr_pct": 0.09
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8727447699594_47279595585674",
+          "title": "",
+          "impressions": 92576,
+          "clicks": 77,
+          "ctr_pct": 0.08
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9070155333770_49462199943306",
+          "title": "Pro-To-Grow Bhim Banana Ready-to-Eat Oats 400g Pouch | Instant Breakfast | Jaggery Sweetened | No Refined Sugar",
+          "impressions": 81466,
+          "clicks": 71,
+          "ctr_pct": 0.09
+        },
+        {
+          "product_id": "PTG-PAN-3FLAV-2PK",
+          "title": "Choco Banana and Strawberry Healthy Pancake Mix Combo – 2 x 250g | Pro-To-Grow",
+          "impressions": 73309,
+          "clicks": 18,
+          "ctr_pct": 0.02
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8628122157194_46521999458442",
+          "title": "Protogrow Instant Bhim Banana Oats Cups | Ready in 5 Minutes",
+          "impressions": 72983,
+          "clicks": 18,
+          "ctr_pct": 0.02
+        },
+        {
+          "product_id": "PTG-BBO-CUPS-3FLAV-6PK",
+          "title": "Instant Oats Cups Combo – 6 Cups | Bhim Banana Strawberry Pineapple | Pro-To-Grow | No Refined Sugar",
+          "impressions": 64949,
+          "clicks": 86,
+          "ctr_pct": 0.13
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8848708599946_47614324408458",
+          "title": "Pro-To-Grow Strawberry Ready-to-Eat Oats 300g Box | Real Strawberries | No Refined Sugar | Instant Breakfast",
+          "impressions": 58793,
+          "clicks": 27,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9208717639818_49776495558794",
+          "title": "Protogrow Kathal Grove Jackfruit Pancake Mix | Gluten Free",
+          "impressions": 47997,
+          "clicks": 35,
+          "ctr_pct": 0.07
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8792465571978_47410928681098",
+          "title": "Protogrow Pineapple Oats Jar | Ready-to-Eat Oats Breakfast",
+          "impressions": 43856,
+          "clicks": 20,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8848704667786_47614306943114",
+          "title": "Pro-To-Grow Strawberry Ready-to-Eat Oats 300g Jar | Real Strawberries | No Refined Sugar | Instant Breakfast",
+          "impressions": 33874,
+          "clicks": 16,
+          "ctr_pct": 0.05
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8771265134730_47363544219786",
+          "title": "Pro-To-Grow Bhim Banana Ready-to-Eat Oats 300g + Steel Bowl 500ml Combo | No Refined Sugar",
+          "impressions": 28691,
+          "clicks": 22,
+          "ctr_pct": 0.08
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9122023243914_49571332292746",
+          "title": "",
+          "impressions": 25888,
+          "clicks": 22,
+          "ctr_pct": 0.08
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8771273654410_47363565158538",
+          "title": "Protogrow Stainless Steel Bowl with Lid & Spoon | 500ml",
+          "impressions": 25784,
+          "clicks": 14,
+          "ctr_pct": 0.05
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P004",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-003",
+      "severity": "high",
+      "title": "'Sales-Shopping- {July 5/2026 }' ROAS 0.88, but budget is not the lever",
+      "finding": "ROAS 0.88 vs account target 3.00. Avg spend ₹604/day is only 30% of the ₹2000 budget, so cutting the budget would change nothing. 9 conversions in 14 days is below the 30 needed before the agent may touch tROAS.",
+      "recommended_action": "Fix conversion value tracking first (ADS-004), then cut wasted products (ADS-007). Re-evaluate tROAS after 2 weeks of clean data.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads",
+        "steps": [
+          "No bid or budget change this week"
+        ]
+      },
+      "evidence": {
+        "campaign": "Sales-Shopping- {July 5/2026 }",
+        "campaign_id": "24002247098",
+        "status": "ENABLED",
+        "bidding": "TARGET_ROAS",
+        "target_roas": "1.5",
+        "daily_budget": "2000.0",
+        "cost": "8460.89",
+        "avg_daily_spend": "604.35",
+        "impressions": "48852",
+        "clicks": "554",
+        "conversions": "9",
+        "conversion_value": "7410.08",
+        "budget_lost_is": "0.1274",
+        "budget_limited": "true"
+      },
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P005",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-004",
+      "severity": "high",
+      "title": "Purchase conversions are under-valued: ₹435 per order in Google Ads vs ₹795 Shopify AOV",
+      "finding": "Primary purchase action(s) ['Purchase {GTM>g-ads}'] report 64.6 conversions worth ₹28086 (30 days). Shopify's real average order is ₹795. Smart bidding (tROAS) is optimising on values about 55% of reality, so reported ROAS is understated and the bidder under-bids.",
+      "recommended_action": "Fix the purchase tag so it sends the full order value (total incl. discounts, in INR) and a transaction_id. Easiest route: use the Shopify Google & YouTube app's conversion tracking (or Shopify's native Google Ads pixel) and set the GTM tag to secondary once the new one records correct values for 7 days.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Goals > Conversions, and GTM / Shopify Customer Events",
+        "steps": [
+          "Compare one test order's value in Google Ads vs Shopify",
+          "Fix the value variable",
+          "Keep only ONE primary purchase action"
+        ]
+      },
+      "evidence": {
+        "primary_purchase_actions": [
+          "Purchase {GTM>g-ads}"
+        ],
+        "conversions_30d": 64.635288,
+        "value_30d": 28086.15030142,
+        "shopify_aov": 795.221
+      },
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P006",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-007",
+      "severity": "high",
+      "title": "4 products spent ₹4807 in Shopping with ~no return",
+      "finding": "₹500+ spend and 40+ clicks over 30 days with zero orders, or ROAS under 0.25. Zero orders is a count, so the value issue in ADS-004 doesn't explain it. Low-price items (e.g. ₹99 single-serves) can't pay back Shopping clicks even when they convert.",
+      "recommended_action": "Exclude these items from the Sales-Shopping campaign for 30 days (listing-group exclusion), or lower their bids. Check their landing page price/stock first; several are PTG-feed duplicates of Shopify items that do convert.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Sales-Shopping > Product groups",
+        "steps": [
+          "Exclude by item ID"
+        ]
+      },
+      "evidence": [
+        {
+          "item_id": "ptg-hpo-dc-750g",
+          "title": "High-Protein Double Chocolate Oats Value Pack – ",
+          "cost": "1968.03",
+          "clicks": "108",
+          "impressions": "10543",
+          "conversions": "0",
+          "conversion_value": "0"
+        },
+        {
+          "item_id": "ptg-hpo-dc-50g-single",
+          "title": "Pro-To-Grow High Protein Oats 250g | Protein Oat",
+          "cost": "1296.74",
+          "clicks": "143",
+          "impressions": "5217",
+          "conversions": "1",
+          "conversion_value": "11.59"
+        },
+        {
+          "item_id": "ptg-zas-400g",
+          "title": "Instant Oats Zero Added Sugar 400g | Pro-To-Grow",
+          "cost": "894.78",
+          "clicks": "69",
+          "impressions": "4019",
+          "conversions": "0",
+          "conversion_value": "0"
+        },
+        {
+          "item_id": "ptg-cd-200g-jar",
+          "title": "ProToGrow Fitbhim Chocolate Nutrition Drink for ",
+          "cost": "647.45",
+          "clicks": "50",
+          "impressions": "3230",
+          "conversions": "0",
+          "conversion_value": "0"
+        }
+      ],
+      "risk": "medium",
+      "status": "PENDING",
+      "id": "P007",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-004",
+      "severity": "medium",
+      "title": "68 products have no GTIN (barcode)",
+      "finding": "Products with GTINs get better matching and more impressions in Shopping.",
+      "recommended_action": "Add the EAN-13 barcode from the pack to each product (Shopify variant 'Barcode' field).",
+      "execution": {
+        "channel": "manual",
+        "where": "Shopify > Products > Variant > Barcode",
+        "steps": [
+          "Enter the 13-digit barcode printed on the pack"
+        ]
+      },
+      "evidence": [
+        "shopify_ZZ_8771273654410_47363565158538",
+        "shopify_ZZ_8771236266122_47363506143370",
+        "shopify_ZZ_8701478174858_47192298651786",
+        "shopify_ZZ_8915109183626_47817487417482",
+        "shopify_ZZ_9011921485962_47916964905098",
+        "shopify_ZZ_8915079757962_47817448980618",
+        "shopify_ZZ_8619455807626_46496635420810",
+        "shopify_ZZ_8628126384266_46522010566794",
+        "shopify_ZZ_9055166529674_49248422822026",
+        "shopify_ZZ_8699762344074_47189069234314",
+        "shopify_ZZ_8743073251466_47313457152138",
+        "shopify_ZZ_8650511679626_46759029014666",
+        "shopify_ZZ_8628125368458_46522009288842",
+        "shopify_ZZ_8771265134730_47363544219786",
+        "shopify_ZZ_8628127858826_46522012205194",
+        "shopify_ZZ_8848704667786_47614306943114",
+        "shopify_ZZ_8628122157194_46521999458442",
+        "shopify_ZZ_8619461181578_46496648429706",
+        "shopify_ZZ_8628095844490_46521946669194",
+        "shopify_ZZ_9070159200394_49462207676554",
+        "shopify_ZZ_8701471424650_47192285085834",
+        "shopify_ZZ_9070155333770_49462199943306",
+        "shopify_ZZ_8628097384586_46521949290634",
+        "shopify_ZZ_8792465571978_47410928681098",
+        "shopify_ZZ_8792468914314_47410932220042",
+        "shopify_ZZ_8727461232778_47279609151626",
+        "shopify_ZZ_8848708599946_47614324408458",
+        "shopify_ZZ_9153575387274_49635505897610",
+        "shopify_ZZ_9160701149322_49660221194378",
+        "PTG-BBO-PINE-300G-BOX",
+        "PTG-COMBO-CD-BBO",
+        "shopify_ZZ_8650512924810_46759033110666",
+        "PTG-BBO-STRAW-300G-JAR",
+        "PTG-CD-400G-POUCH",
+        "PTG-BBO-CUPS-ST-5PK",
+        "PTG-ZAS-400G",
+        "PTG-BBO-CUPS-PI-5PK",
+        "PTG-CD-300G-BOX",
+        "PTG-PAN-CHOCBAN-2PK",
+        "PTG-HPO-PI-5PACK",
+        "PTG-PAN-STRAW-250G",
+        "PTG-BBO-300G-JAR",
+        "PTG-PAN-CHOCBAN-250G",
+        "PTG-CD-750G-VALUE",
+        "PTG-BBO-400G-POUCH",
+        "PTG-BBO-PINE-300G-JAR",
+        "PTG-PAN-3FLAV-2PK",
+        "PTG-HPO-DC-50G-SINGLE",
+        "PTG-BBO-CUPS-BB-5PK",
+        "PTG-BYOB-BOX6",
+        "PTG-BBO-CUPS-3FLAV-6PK",
+        "PTG-BYOB-BOX10",
+        "PTG-BBO-300G-BOX",
+        "PTG-HPO-DC-750G",
+        "shopify_ZZ_9122014363786_49754188054666",
+        "shopify_ZZ_9208717639818_49776495558794",
+        "PTG-PAN-JACKFRUIT-250G",
+        "shopify_ZZ_8619458920586_50253404668042",
+        "shopify_ZZ_9337586745482_50330944340106",
+        "shopify_ZZ_9337575800970_50330927759498",
+        "shopify_ZZ_9337557024906_50330897186954",
+        "shopify_ZZ_9337565085834_50330909573258",
+        "shopify_ZZ_9134070202506_49597432889482",
+        "shopify_ZZ_9121358512266_49570334638218",
+        "shopify_ZZ_9134066172042_49597428596874",
+        "shopify_ZZ_9357286539402_50386835472522",
+        "shopify_ZZ_9361320181898_50395906343050",
+        "shopify_ZZ_9390228865162_50488215568522"
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P008",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "MC-007",
+      "severity": "medium",
+      "title": "2 approved titles are not live in Merchant Center",
+      "finding": "The titles supplemental sheet has these rows, but Merchant Center still shows the old title.",
+      "recommended_action": "Merchant Center > Products > open the item > 'Sources': check the supplemental source is linked to the Shopify data source and was fetched after the row was added. Click 'Fetch now' on the titles source.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Data sources > Supplemental: Titles",
+        "steps": [
+          "Fetch now",
+          "Re-check after 1 hour"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "shopify_ZZ_8699762344074_47189069234314",
+          "wanted": "Pro-To-Grow Bhim Banana Ready-to-Eat Oats 3 x 300g Jars + Free Steel Bowl | No Refined Sugar | Jaggery Sweetened",
+          "live": "Bhim Banana Ready-to-Eat Oats Pack of 3 – 300g Jars with Complimentary Bowl"
+        },
+        {
+          "id": "shopify_ZZ_9160701149322_49660221194378",
+          "wanted": "Pro-To-Grow High Protein Pineapple Oats 5 x 50g | 12g Protein per Serving | Jaggery Sweetened | Gluten Free",
+          "live": "ProToGrow Ready to Eat 12g High Protein Pineapple Oats | 5 x 50g | Gluten Free, High Fibre | Sweetened with Jaggery | Supports Healthy Muscle Recovery"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P009",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "FEED-002",
+      "severity": "medium",
+      "title": "Add 10 new products to the linked Brand/Type/Labels sheet",
+      "finding": "These products were added to Shopify after the 2026-09-28 feed: brand shows 'Pro-to-grow' and they have no product_type or product-line label, so Shopping can't group or report them.",
+      "recommended_action": "Append the rows to the existing sheet (same file, same link; Merchant Center picks them up at the next daily fetch). Nothing else in the sheet changes.",
+      "execution": {
+        "channel": "google_sheets",
+        "action": "append_rows",
+        "spreadsheet_id": "1ueCXep3whov23Dqe1RQDTiRpsVEL9D6ywC-AUPUnlgs",
+        "file": "data/feeds/2026-10-21_attributes_append.csv"
+      },
+      "evidence": [
+        {
+          "id": "shopify_ZZ_9337586745482_50330944340106",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9337575800970_50330927759498",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9337557024906_50330897186954",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9337565085834_50330909573258",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9134070202506_49597432889482",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9121358512266_49570334638218",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9134066172042_49597428596874",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > High-Protein Oats",
+          "custom_label_0": "OATS-HPO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9357286539402_50386835472522",
+          "brand": "Pro-To-Grow",
+          "product_type": "Breakfast > Oats > Ready-to-Eat Oats",
+          "custom_label_0": "OATS-BBO",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9361320181898_50395906343050",
+          "brand": "Pro-To-Grow",
+          "product_type": "Health Drinks > Chocolate Health Drink",
+          "custom_label_0": "CD",
+          "custom_label_1": ""
+        },
+        {
+          "id": "shopify_ZZ_9390228865162_50488215568522",
+          "brand": "Pro-To-Grow",
+          "product_type": "Health Drinks > Sports Protein Drink",
+          "custom_label_0": "SPORTS-DRINK",
+          "custom_label_1": ""
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P010",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-006",
+      "severity": "medium",
+      "title": "1 enabled campaign(s) got 0 impressions in 14 days: PTG Shopping - New Products Test",
+      "finding": "Enabled and eligible but not serving. For Shopping, the usual cause is overlap: the same products are in another Shopping campaign with the same priority and a higher bid, so that campaign wins every auction.",
+      "recommended_action": "Either set this campaign's Shopping priority to High (and the main campaign to Low/Medium), or exclude these products from the main Shopping campaign. Otherwise pause it to keep the account tidy.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Campaign > Settings > Campaign priority",
+        "steps": [
+          "Pick: raise priority / exclude from main campaign / pause"
+        ]
+      },
+      "evidence": [
+        {
+          "campaign": "PTG Shopping - New Products Test",
+          "campaign_id": "24383683129",
+          "status": "ENABLED",
+          "bidding": "TARGET_SPEND",
+          "target_roas": "",
+          "daily_budget": "500.0",
+          "cost": "0.0",
+          "avg_daily_spend": "0.0",
+          "impressions": "0",
+          "clicks": "0",
+          "conversions": "0",
+          "conversion_value": "0",
+          "budget_lost_is": "0",
+          "budget_limited": "false"
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P011",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-005",
+      "severity": "medium",
+      "title": "2 non-purchase conversion actions are set as primary",
+      "finding": "Primary actions are what smart bidding optimises for. Page views and YouTube follow-on views are not sales; if a campaign starts recording them, tROAS/Max-conversions will chase cheap clicks instead of orders.",
+      "recommended_action": "Set these to Secondary so only Purchase drives bidding.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Goals > Conversions > (action) > Edit > Secondary",
+        "steps": [
+          "YouTube follow-on views",
+          "Local actions - Website visits"
+        ]
+      },
+      "evidence": [
+        {
+          "name": "YouTube follow-on views",
+          "category": "YOUTUBE_FOLLOW_ON_VIEWS"
+        },
+        {
+          "name": "Local actions - Website visits",
+          "category": "PAGE_VIEW"
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P012",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "PERF-003",
+      "severity": "low",
+      "title": "5 products with impressions but zero clicks",
+      "finding": "No clicks at all over 30 days.",
+      "recommended_action": "Check price vs benchmark and image; consider excluding from Shopping if still zero after fixes.",
+      "execution": {
+        "channel": "manual",
+        "where": "Merchant Center > Products",
+        "steps": [
+          "Review each item"
+        ]
+      },
+      "evidence": [
+        {
+          "product_id": "SHOPIFY_ZZ_8628091584650_46521939853450",
+          "title": "",
+          "impressions": 1183,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_8932215193738_47849792241802",
+          "title": "",
+          "impressions": 872,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9011921485962_47916964905098",
+          "title": "Protogrow Instant Oats Cups Combo | Bhim Banana, Strawberry & Pineapple",
+          "impressions": 931,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9055166529674_49248422822026",
+          "title": "Protogrow Pineapple & Strawberry Oats Combo | Ready-to-Eat Oats",
+          "impressions": 12135,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        },
+        {
+          "product_id": "SHOPIFY_ZZ_9160767438986_49660293611658",
+          "title": "",
+          "impressions": 813,
+          "clicks": 0,
+          "ctr_pct": 0.0
+        }
+      ],
+      "risk": "low",
+      "status": "PENDING",
+      "id": "P013",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-001W",
+      "severity": "low",
+      "title": "3 brand/core search terms spent ₹1423 with 0 conversions",
+      "finding": "These match protected brand or core-product words, so the agent will not add them as negatives automatically.",
+      "recommended_action": "No change proposed. Re-check after conversion tracking is fixed (ADS-004); the 0 may be a tracking gap.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Insights > Search terms",
+        "steps": [
+          "Review only"
+        ]
+      },
+      "evidence": [
+        {
+          "search_term": "pro to grow",
+          "campaign_id": "24002247098",
+          "campaign": "Sales-Shopping- {July 5/2026 }",
+          "campaign_status": "ENABLED",
+          "cost": "654.32",
+          "clicks": "13",
+          "impressions": "1144",
+          "conversions": "0",
+          "conversion_value": "0"
+        },
+        {
+          "search_term": "protein oats",
+          "campaign_id": "24002247098",
+          "campaign": "Sales-Shopping- {July 5/2026 }",
+          "campaign_status": "ENABLED",
+          "cost": "461.44",
+          "clicks": "17",
+          "impressions": "1350",
+          "conversions": "0",
+          "conversion_value": "0"
+        },
+        {
+          "search_term": "pro to grow fitbhim",
+          "campaign_id": "24002247098",
+          "campaign": "Sales-Shopping- {July 5/2026 }",
+          "campaign_status": "ENABLED",
+          "cost": "306.85",
+          "clicks": "2",
+          "impressions": "34",
+          "conversions": "0",
+          "conversion_value": "0"
+        }
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P014",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    },
+    {
+      "rule": "ADS-005B",
+      "severity": "low",
+      "title": "GA4 add_to_cart is categorised as PURCHASE",
+      "finding": "It's secondary so it doesn't drive bidding today, but it would count as a purchase if anyone made it primary.",
+      "recommended_action": "Change its category to Add to cart.",
+      "execution": {
+        "channel": "manual",
+        "where": "Google Ads > Goals > Conversions",
+        "steps": [
+          "www.protogrow.in - GA4 (web) add_to_cart"
+        ]
+      },
+      "evidence": [
+        "www.protogrow.in - GA4 (web) add_to_cart"
+      ],
+      "risk": "none",
+      "status": "PENDING",
+      "id": "P015",
+      "history": [
+        {
+          "at": "2026-10-21T17:58:30+00:00",
+          "event": "proposed"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+campaign,campaign_id,status,bidding,target_roas,daily_budget,cost,avg_daily_spend,impressions,clicks,conversions,conversion_value,budget_lost_is,budget_limited
+Sales-Shopping- {July 5/2026 },24002247098,ENABLED,TARGET_ROAS,1.5,2000.0,8460.89,604.35,48852,554,9,7410.08,0.1274,true
+PTG Shopping - New Products Test,24383683129,ENABLED,TARGET_SPEND,,500.0,0.0,0.0,0,0,0,0,0,false

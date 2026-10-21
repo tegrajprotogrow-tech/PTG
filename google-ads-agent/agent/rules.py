@@ -40,6 +40,11 @@ def _tokens(title):
     return {w for w in words if w not in stop}
 
 
+def _sizes(title):
+    """Pack counts and weights (e.g. {'5', '50g'}). Two listings with different numbers are different products."""
+    return set(re.findall(r"\d+\s*(?:g|kg|ml)?", (title or "").lower().replace(" ", "")))
+
+
 def _source(product_id):
     return "shopify" if product_id.lower().startswith("shopify_") else "ptg_feed"
 
@@ -70,7 +75,7 @@ def mc_duplicates(products, cfg):
         best, best_score = None, 0.0
         for s in shop:
             st = _tokens(s["product_title"])
-            if not ft or not st:
+            if not ft or not st or _sizes(f["product_title"]) != _sizes(s["product_title"]):
                 continue
             score = len(ft & st) / len(ft | st)
             if score > best_score:
@@ -152,10 +157,27 @@ def mc_local_disapprovals(statuses, cfg):
         out, risk="none")]
 
 
-def mc_performance(perf, cfg):
+def aggregate_performance(perf, products=None):
+    """Sum rows per product. Merchant Center splits a product into several rows when its title changes."""
+    titles = {p["product_id"].lower(): p["product_title"] for p in (products or []) if p.get("product_title")}
+    agg = {}
+    for p in perf:
+        key = (p.get("product_id") or "").lower()
+        if not key:
+            continue
+        row = agg.setdefault(key, {"product_id": p["product_id"], "product_title": titles.get(key) or p.get("product_title") or "",
+                                   "impressions": 0.0, "clicks": 0.0})
+        row["impressions"] += _num(p["impressions"])
+        row["clicks"] += _num(p["clicks"])
+        if not row["product_title"] and p.get("product_title"):
+            row["product_title"] = p["product_title"]
+    return list(agg.values())
+
+
+def mc_performance(perf, cfg, products=None):
     mc = cfg["merchant_center"]
     low_ctr, heroes, zero = [], [], []
-    for p in perf:
+    for p in aggregate_performance(perf, products):
         imp, clk = _num(p["impressions"]), _num(p["clicks"])
         ctr = (clk / imp * 100) if imp else 0.0
         row = {"product_id": p["product_id"], "title": p["product_title"], "impressions": int(imp),
@@ -199,11 +221,18 @@ def mc_performance(perf, cfg):
 
 # ---------------------------------------------------------------- Google Ads
 
+def _protected(term, cfg):
+    t = term.lower()
+    return any(w in t for w in cfg["keywords"].get("protected_terms", []))
+
+
 def ads_negative_keywords(search_terms, cfg):
+    """Only live campaigns, and never brand or core-product terms: those go to a human, not a negative list."""
     kw = cfg["keywords"]
     wasted = [t for t in search_terms
-              if _num(t["cost"]) >= kw["negative_min_cost_inr"] and _num(t["conversions"]) == 0
-              and _num(t["clicks"]) >= kw["negative_min_clicks"]]
+              if t.get("campaign_status", "ENABLED") == "ENABLED"
+              and _num(t["cost"]) >= kw["negative_min_cost_inr"] and _num(t["conversions"]) == 0
+              and _num(t["clicks"]) >= kw["negative_min_clicks"] and not _protected(t["search_term"], cfg)]
     wasted.sort(key=lambda t: -_num(t["cost"]))
     wasted = wasted[: kw["max_negatives_per_run"]]
     out = []
@@ -212,10 +241,19 @@ def ads_negative_keywords(search_terms, cfg):
             "ADS-001", "high", f"Add negative keyword [{t['search_term']}]",
             f"Spent ₹{_num(t['cost']):.0f} on {int(_num(t['clicks']))} clicks with 0 conversions.",
             "Add as exact-match negative at campaign level.",
-            {"channel": "windsor", "connector": "google_ads", "action": "push_negative_keywords",
+            {"channel": "google_ads", "action": "push_negative_keywords",
              "params": {"level": "campaign", "campaign_id": t["campaign_id"],
                         "keywords": [{"text": t["search_term"], "match_type": "EXACT"}]}},
             t, risk="low"))
+    watch = [t for t in search_terms
+             if t.get("campaign_status", "ENABLED") == "ENABLED" and _num(t["conversions"]) == 0
+             and _num(t["cost"]) >= kw["negative_min_cost_inr"] and _protected(t["search_term"], cfg)]
+    if watch:
+        out.append(_proposal(
+            "ADS-001W", "low", f"{len(watch)} brand/core search terms spent ₹{sum(_num(t['cost']) for t in watch):.0f} with 0 conversions",
+            "These match protected brand or core-product words, so the agent will not add them as negatives automatically.",
+            "No change proposed. Re-check after conversion tracking is fixed (ADS-004); the 0 may be a tracking gap.",
+            _manual("Google Ads > Insights > Search terms", ["Review only"]), watch, risk="none"))
     return out
 
 
@@ -229,6 +267,17 @@ def ads_budget(campaigns, cfg):
         if cost <= 0 or budget <= 0:
             continue
         roas = value / cost
+        utilisation = _num(c.get("avg_daily_spend")) / budget * 100 if c.get("avg_daily_spend") else 100
+        if roas < target * 0.7 and utilisation < cfg["budget"]["min_spend_utilisation_for_cut_pct"]:
+            out.append(_proposal(
+                "ADS-003", "high", f"'{c['campaign']}' ROAS {roas:.2f}, but budget is not the lever",
+                f"ROAS {roas:.2f} vs account target {target:.2f}. Avg spend ₹{_num(c.get('avg_daily_spend')):.0f}/day is only "
+                f"{utilisation:.0f}% of the ₹{budget:.0f} budget, so cutting the budget would change nothing. "
+                f"{c.get('conversions')} conversions in 14 days is below the {cfg['bidding']['min_conversions_before_smart_bidding_change']} "
+                "needed before the agent may touch tROAS.",
+                "Fix conversion value tracking first (ADS-004), then cut wasted products (ADS-007). Re-evaluate tROAS after 2 weeks of clean data.",
+                _manual("Google Ads", ["No bid or budget change this week"]), c, risk="none"))
+            continue
         if roas < target * 0.7:
             new = round(budget * (1 - max_pct / 100))
             direction = "Decrease"
@@ -243,20 +292,123 @@ def ads_budget(campaigns, cfg):
             "ADS-002", "high", f"{direction} budget of '{c['campaign']}' ₹{budget:.0f} → ₹{new:.0f}/day",
             f"ROAS {roas:.2f} vs target {target:.2f} (cost ₹{cost:.0f}, value ₹{value:.0f}).",
             f"{direction} daily budget by {max_pct}% (guardrail maximum).",
-            {"channel": "windsor", "connector": "google_ads", "action": "set_campaign_budget",
+            {"channel": "google_ads", "action": "set_campaign_budget",
              "params": {"campaign_id": c["campaign_id"], "budget_type": "daily",
                         "amount_micros": int(new * 1_000_000)}},
             c, risk="medium"))
     return out
 
 
+def ads_tracking(actions, sales, cfg):
+    out = []
+    t = cfg["tracking"]
+    purchase = [a for a in actions if a["primary_for_goal"] == "True" and a["category"] == "PURCHASE"]
+    conv = sum(_num(a["conversions_30d"]) for a in purchase)
+    value = sum(_num(a["conv_value_30d"]) for a in purchase)
+    aov = _num(sales[0]["average_order_value"]) if sales else 0
+    if conv and aov and value / conv < aov * t["min_value_to_aov_ratio"]:
+        out.append(_proposal(
+            "ADS-004", "high", f"Purchase conversions are under-valued: ₹{value / conv:.0f} per order in Google Ads vs ₹{aov:.0f} Shopify AOV",
+            f"Primary purchase action(s) {[a['name'] for a in purchase]} report {conv:.1f} conversions worth ₹{value:.0f} "
+            f"(30 days). Shopify's real average order is ₹{aov:.0f}. Smart bidding (tROAS) is optimising on values about "
+            f"{value / conv / aov * 100:.0f}% of reality, so reported ROAS is understated and the bidder under-bids.",
+            "Fix the purchase tag so it sends the full order value (total incl. discounts, in INR) and a transaction_id. "
+            "Easiest route: use the Shopify Google & YouTube app's conversion tracking (or Shopify's native Google Ads pixel) "
+            "and set the GTM tag to secondary once the new one records correct values for 7 days.",
+            _manual("Google Ads > Goals > Conversions, and GTM / Shopify Customer Events",
+                    ["Compare one test order's value in Google Ads vs Shopify", "Fix the value variable", "Keep only ONE primary purchase action"]),
+            {"primary_purchase_actions": [a["name"] for a in purchase], "conversions_30d": conv, "value_30d": value, "shopify_aov": aov},
+            risk="low"))
+    bad = [a for a in actions if a["primary_for_goal"] == "True" and a["category"] in t["non_purchase_primary_categories"]]
+    if bad:
+        out.append(_proposal(
+            "ADS-005", "medium", f"{len(bad)} non-purchase conversion actions are set as primary",
+            "Primary actions are what smart bidding optimises for. Page views and YouTube follow-on views are not sales; "
+            "if a campaign starts recording them, tROAS/Max-conversions will chase cheap clicks instead of orders.",
+            "Set these to Secondary so only Purchase drives bidding.",
+            _manual("Google Ads > Goals > Conversions > (action) > Edit > Secondary", [a["name"] for a in bad]),
+            [{"name": a["name"], "category": a["category"]} for a in bad], risk="low"))
+    mis = [a for a in actions if "add_to_cart" in a["name"].lower() and a["category"] == "PURCHASE"]
+    if mis:
+        out.append(_proposal(
+            "ADS-005B", "low", "GA4 add_to_cart is categorised as PURCHASE",
+            "It's secondary so it doesn't drive bidding today, but it would count as a purchase if anyone made it primary.",
+            "Change its category to Add to cart.", _manual("Google Ads > Goals > Conversions", [a["name"] for a in mis]),
+            [a["name"] for a in mis], risk="none"))
+    return out
+
+
+def ads_not_serving(campaigns, cfg):
+    dead = [c for c in campaigns if c["status"] == "ENABLED" and _num(c["impressions"]) == 0]
+    if not dead:
+        return []
+    return [_proposal(
+        "ADS-006", "medium", f"{len(dead)} enabled campaign(s) got 0 impressions in 14 days: " + ", ".join(c["campaign"] for c in dead),
+        "Enabled and eligible but not serving. For Shopping, the usual cause is overlap: the same products are in another "
+        "Shopping campaign with the same priority and a higher bid, so that campaign wins every auction.",
+        "Either set this campaign's Shopping priority to High (and the main campaign to Low/Medium), or exclude these "
+        "products from the main Shopping campaign. Otherwise pause it to keep the account tidy.",
+        _manual("Google Ads > Campaign > Settings > Campaign priority", ["Pick: raise priority / exclude from main campaign / pause"]),
+        dead, risk="low")]
+
+
+def ads_product_waste(items, cfg):
+    p = cfg["products"]
+    waste = [i for i in items if _num(i["cost"]) >= p["waste_min_cost_inr"] and _num(i["clicks"]) >= p["waste_min_clicks"]
+             and (_num(i["conversions"]) == 0 or _num(i["conversion_value"]) / _num(i["cost"]) < p["waste_max_roas"])]
+    if not waste:
+        return []
+    waste.sort(key=lambda i: -_num(i["cost"]))
+    return [_proposal(
+        "ADS-007", "high", f"{len(waste)} products spent ₹{sum(_num(i['cost']) for i in waste):.0f} in Shopping with ~no return",
+        f"₹{p['waste_min_cost_inr']}+ spend and {p['waste_min_clicks']}+ clicks over 30 days with zero orders, or ROAS under "
+        f"{p['waste_max_roas']}. Zero orders is a count, so the value issue in ADS-004 doesn't explain it. Low-price items "
+        "(e.g. ₹99 single-serves) can't pay back Shopping clicks even when they convert.",
+        "Exclude these items from the Sales-Shopping campaign for 30 days (listing-group exclusion), or lower their bids. "
+        "Check their landing page price/stock first; several are PTG-feed duplicates of Shopify items that do convert.",
+        _manual("Google Ads > Sales-Shopping > Product groups", ["Exclude by item ID"]),
+        waste, risk="medium")]
+
+
+def mc_titles_not_applied(products, overrides, cfg):
+    live = {p["product_id"].lower(): p["product_title"] for p in products}
+    stuck = []
+    for o in overrides:
+        key = o["id"].lower()
+        if key in live and live[key] and live[key] != o["title"]:
+            stuck.append({"id": o["id"], "wanted": o["title"], "live": live[key]})
+    if not stuck:
+        return []
+    return [_proposal(
+        "MC-007", "medium", f"{len(stuck)} approved titles are not live in Merchant Center",
+        "The titles supplemental sheet has these rows, but Merchant Center still shows the old title.",
+        "Merchant Center > Products > open the item > 'Sources': check the supplemental source is linked to the "
+        "Shopify data source and was fetched after the row was added. Click 'Fetch now' on the titles source.",
+        _manual("Merchant Center > Data sources > Supplemental: Titles", ["Fetch now", "Re-check after 1 hour"]),
+        stuck, risk="none")]
+
+
+def mc_compliance(products, cfg):
+    hits = [p for p in products if (p.get("custom_label_0") or "") in ("INFANT-FORMULA", "BABY-CEREAL")]
+    if not hits:
+        return []
+    return [_proposal(
+        "COMP-001", "high", f"{len(hits)} infant formula / baby food products: decision still pending",
+        "Still open from 2026-09-28 (waiting on legal). India's IMS Act and Google's policy restrict advertising infant "
+        "formula and infant foods. 6 of these have no title in Merchant Center (blocked).",
+        "When legal confirms, approve an EXCLUDE-ADS label for these items. This is not legal advice.",
+        _manual("Legal review", ["Confirm which SKUs are for children under 2"]),
+        [{"product_id": p["product_id"], "title": p["product_title"]} for p in hits], risk="high")]
+
+
 # ---------------------------------------------------------------- Shopify (source of the Google feed)
 
 PRODUCT_LINES = [
-    # (label, product_type, keywords that must all appear) — first match wins
+    # (label, product_type, keywords that must all appear) — first match wins; titles are lower-cased, '-' -> ' '
     ("INFANT-FORMULA", "Baby & Kids > Infant Formula", ["formula"]),
     ("BABY-CEREAL", "Baby & Kids > Baby Cereal", ["procan"]),
-    ("OATS-HPO", "Breakfast > Oats > High-Protein Oats", ["protein"]),
+    ("SPORTS-DRINK", "Health Drinks > Sports Protein Drink", ["protein drink"]),
+    ("OATS-HPO", "Breakfast > Oats > High-Protein Oats", ["high protein"]),
     ("OATS-ZAS", "Breakfast > Oats > Sugar-Free Oats", ["monk fruit"]),
     ("CD", "Health Drinks > Chocolate Health Drink", ["health drink"]),
     ("PANCAKE", "Breakfast > Pancake Mix", ["pancake"]),
@@ -269,7 +421,7 @@ PRODUCT_LINES = [
 
 
 def product_line(title):
-    t = (title or "").lower()
+    t = (title or "").lower().replace("-", " ")
     for label, ptype, words in PRODUCT_LINES:
         if all(w in t for w in words):
             return label, ptype

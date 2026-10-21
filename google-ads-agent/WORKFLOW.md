@@ -22,8 +22,11 @@ Claude pulls data through Windsor.ai and saves it as CSV in `data/snapshots/<dat
 | `mc_products.csv` | Merchant Center product attributes | ✅ connected (5775540276) |
 | `mc_performance_30d.csv` | Merchant Center impressions and clicks | ✅ connected |
 | `mc_status.csv` | Approved or disapproved counts per destination | ✅ connected |
-| `ads_campaigns_14d.csv` | Google Ads campaign cost, value and budget | ⛔ connect Google Ads first |
-| `ads_search_terms_30d.csv` | Google Ads search terms | ⛔ connect Google Ads first |
+| `ads_campaigns_14d.csv` | Google Ads campaign cost, value, budget and spend utilisation | ✅ via Composio (294-317-5872) |
+| `ads_search_terms_30d.csv` | Google Ads search terms (cost > ₹100) | ✅ via Composio |
+| `ads_products_30d.csv` | Shopping cost and conversions per product | ✅ via Composio |
+| `ads_conversion_actions.csv` | Conversion actions, primary/secondary, 30-day values | ✅ via Composio |
+| `shopify_sales_30d.csv` | Real orders and AOV, used to sanity-check conversion tracking | ✅ Shopify analytics (read-only) |
 
 ## Stage 2: Analyze
 `python agent/super_agent.py analyze --date YYYY-MM-DD` runs every rule in `agent/rules.py`:
@@ -39,8 +42,15 @@ Claude pulls data through Windsor.ai and saves it as CSV in `data/snapshots/<dat
 | PERF-001 | High impressions with CTR below 0.15% | Title and image rewrite, then label LOW-CTR |
 | PERF-002 | Hero products (CTR of 1.5% or more, 100+ clicks) | Label HERO and give it a dedicated budget |
 | PERF-003 | Impressions with zero clicks | Review or exclude |
-| ADS-001 | Search terms that spend and never convert | `push_negative_keywords` |
-| ADS-002 | Campaign ROAS far below or above target | `set_campaign_budget` (±20% max) |
+| ADS-001 | Search terms that spend and never convert (live campaigns only; brand and core-product words are never auto-negated) | `push_negative_keywords` |
+| ADS-002 | Campaign ROAS far below or above target, and the budget is actually being spent | `set_campaign_budget` (±20% max) |
+| ADS-003 | Low ROAS, but budget isn't the constraint | Advice only, no change |
+| ADS-004 | Purchase value in Google Ads far below Shopify AOV (broken value tracking) | Manual (tag fix) |
+| ADS-005 | Non-purchase actions set as primary conversions | Manual (set to Secondary) |
+| ADS-006 | Enabled campaign with 0 impressions | Manual (priority or pause) |
+| ADS-007 | Products with Shopping spend and no orders (or ROAS < 0.25) | Manual (listing-group exclusion) |
+| MC-007 | Approved feed titles that aren't live | Manual (re-fetch the source) |
+| FEED-002 | New Shopify products not yet in the linked attributes sheet | Append rows to the same Google Sheet |
 
 ## Stage 3: Propose
 The agent writes two files:
@@ -71,6 +81,8 @@ After each change, run `applied --date <date> P00X --result "..."`.
 ## Stage 6: Verify
 Seven days later, Claude pulls fresh data and compares it with the "before" snapshot for each applied proposal.
 If a change made things worse, the agent writes a **rollback proposal**. That proposal also needs your approval.
+
+Rules listed under `disabled_rules` in the guardrails file (rejected by you before) are never proposed again.
 
 ## Guardrails (`config/guardrails.json`)
 These are hard limits. Even an approved change is blocked if it breaks one.
